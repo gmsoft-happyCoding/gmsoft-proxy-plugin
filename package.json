@@ -1,0 +1,30 @@
+{
+  "name": "gmsoft-proxy-plugin",
+  "version": "1.0.0",
+  "description": "开发环境devserver代理插件",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rollup --config"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gmsoft-happyCoding/gmsoft-proxy-plugin.git"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gmsoft-happyCoding/gmsoft-proxy-plugin/issues"
+  },
+  "homepage": "https://github.com/gmsoft-happyCoding/gmsoft-proxy-plugin#readme",
+  "dependencies": {
+    "rollup": "^2.46.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^18.0.0",
+    "@rollup/plugin-node-resolve": "^11.2.1"
+  }
+}
