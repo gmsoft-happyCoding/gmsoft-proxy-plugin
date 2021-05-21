@@ -1,5 +1,10 @@
 'use strict';
 
+Object.defineProperty(exports, '__esModule', { value: true });
+
 const a = () => {};
 
-module.exports = a;
+const b = () => {};
+
+exports.b = b;
+exports.default = a;
