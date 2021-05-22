@@ -1,8 +1,9 @@
 const a = () => {
-        const c = 1 + 1;
+    const c = 1 + 1;
 
-        return c;
-    },
-    b = () => a;
+    return c;
+};
+
+const b = () => a;
 
 export { b, a };
