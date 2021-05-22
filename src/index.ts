@@ -1,10 +1,8 @@
 const a = () => {
-    const c = 1 + 1;
+        const c = 1 + 1;
 
-    return c;
-};
+        return c;
+    },
+    b = () => a;
 
-const b = () => {};
-
-export { b };
-export default a;
+export { b, a };

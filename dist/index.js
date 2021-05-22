@@ -2,9 +2,10 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-const a = () => {};
+var a = function () {
+    var c = 1 + 1;
+    return c;
+}, b = function () { return a; };
 
-const b = () => {};
-
+exports.a = a;
 exports.b = b;
-exports.default = a;
