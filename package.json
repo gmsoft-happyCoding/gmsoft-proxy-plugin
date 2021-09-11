@@ -21,7 +21,9 @@
     "url": "https://github.com/gmsoft-happyCoding/gmsoft-proxy-plugin/issues"
   },
   "homepage": "https://github.com/gmsoft-happyCoding/gmsoft-proxy-plugin#readme",
-  "dependencies": {},
+  "dependencies": {
+    "lodash": "^4.17.21"
+  },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^18.0.0",
     "@rollup/plugin-eslint": "^8.0.1",
