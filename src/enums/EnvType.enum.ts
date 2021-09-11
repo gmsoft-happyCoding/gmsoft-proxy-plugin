@@ -1,4 +1,4 @@
-enum EnvType {
+export enum EnvType {
     /** dev */
     dev = 'dev',
 
@@ -8,5 +8,3 @@ enum EnvType {
     /** test1 */
     test1 = 'test1',
 }
-
-module.exports = EnvType;

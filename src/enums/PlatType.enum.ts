@@ -1,4 +1,4 @@
-enum PlatType {
+export enum PlatType {
     /** GLXT */
     GLXT = 'GLXT',
 
@@ -8,5 +8,3 @@ enum PlatType {
     /** XCJ */
     XCJ = 'XCJ',
 }
-
-module.exports = PlatType;

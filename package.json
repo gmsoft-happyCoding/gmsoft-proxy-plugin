@@ -2,7 +2,7 @@
   "name": "gmsoft-proxy-plugin",
   "version": "1.0.0",
   "description": "开发环境devserver代理插件",
-  "main": "index.js",
+  "main": "./dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "rollup -cw",
@@ -29,6 +29,7 @@
     "@rollup/plugin-eslint": "^8.0.1",
     "@rollup/plugin-node-resolve": "^11.2.1",
     "@rollup/plugin-typescript": "^8.2.1",
+    "@types/lodash": "^4.14.172",
     "@typescript-eslint/eslint-plugin": "^4.24.0",
     "@typescript-eslint/parser": "^4.24.0",
     "eslint": "^7.26.0",

@@ -1,3 +1,8 @@
+import { get } from 'lodash';
+import { ENV_DOMAIN } from './constant';
+import { buildaPrams } from './utils';
+import { proxtConfig } from './proxy';
+
 const chooseProxyOptions = async (context: any) => {
     const { inquirer, produce, pluginOption } = context;
 
@@ -35,12 +40,21 @@ const chooseProxyOptions = async (context: any) => {
         return produce(context, draft => {
             draft.config.envs = {
                 ...draft.config.envs,
+                /** 代理环境 */
                 REACT_APP_PROXY_ENV: answers.proxyEnv,
+                /** 代理平台 */
                 REACT_APP_PROXY_PLAT: answers.proxyPlat,
+                /** 代理请求所需参数 */
+                REACT_APP_PROXY_PARAMS: buildaPrams(answers.proxyEnv, answers.proxyPlat),
+                /** 代理域名 */
+                REACT_APP_PROXT_LOGIN_DOMAIN: get(
+                    ENV_DOMAIN,
+                    `${answers.proxyEnv}.${answers.proxyPlat}`
+                ),
             };
         });
     }
     return context;
 };
 
-module.exports = chooseProxyOptions;
+export { proxtConfig, chooseProxyOptions };
