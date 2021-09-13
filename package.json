@@ -1,6 +1,6 @@
 {
-  "name": "gmsoft-proxy-plugin",
-  "version": "1.0.3",
+  "name": "@gmsoft/proxy-plugin",
+  "version": "1.0.0",
   "description": "开发环境devserver代理插件",
   "main": "./dist/index.js",
   "scripts": {
@@ -13,7 +13,7 @@
     "url": "git+https://github.com/gmsoft-happyCoding/gmsoft-proxy-plugin.git"
   },
   "publishConfig": {
-    "registry": "http://192.168.2.10:8081/repository/npm.hosted/"
+    "registry": "https://registry.npmjs.org/"
   },
   "author": "",
   "license": "ISC",

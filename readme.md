@@ -1,7 +1,9 @@
 ## 安装
 
 ```bash
-$ npm install --save-dev http-proxy-middleware
+$ npm install -dev @gmsoft/proxy-plugin
+
+$ yarn add @gmsoft/proxy-plugin --dev 
 ```
 
 Note:切换成私服 npm 源
@@ -15,7 +17,7 @@ Note:切换成私服 npm 源
       加入对插件的使用
 
 ```javascript
-const { chooseProxyOptions } = require('gmsoft-proxy-plugin');
+const { chooseProxyOptions } = require('@gmsoft/proxy-plugin');
 
 module.exports = {
     envs: {
@@ -31,7 +33,7 @@ module.exports = {
      ./config/webpackDevServer.config.js
 
 ```javascript
-const { setupProxy } = require('gmsoft-proxy-plugin');
+const { setupProxy } = require('@gmsoft/proxy-plugin');
 
 before(app, server) {
 
