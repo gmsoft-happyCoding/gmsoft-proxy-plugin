@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import get from 'lodash/get';
 import { EnvType } from './enums/EnvType.enum';
 import { PlatType } from './enums/PlatType.enum';
 import { ENV_DOMAIN } from './constant';

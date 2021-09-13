@@ -1,7 +1,14 @@
-import { get } from 'lodash';
-import { ENV_DOMAIN } from './constant';
+import get from 'lodash/get';
+import {
+    ENV_DOMAIN,
+    REACT_APP_PROXY_PARAMS,
+    REACT_APP_PROXY_PLAT,
+    REACT_APP_PROXY_ENV,
+    REACT_APP_PROXT_LOGIN_DOMAIN,
+} from './constant';
 import { buildaPrams } from './utils';
 import { proxtConfig } from './proxy';
+import { setupProxy } from './setupProxy';
 
 const chooseProxyOptions = async (context: any) => {
     const { inquirer, produce, pluginOption } = context;
@@ -41,13 +48,13 @@ const chooseProxyOptions = async (context: any) => {
             draft.config.envs = {
                 ...draft.config.envs,
                 /** 代理环境 */
-                REACT_APP_PROXY_ENV: answers.proxyEnv,
+                [REACT_APP_PROXY_ENV]: answers.proxyEnv,
                 /** 代理平台 */
-                REACT_APP_PROXY_PLAT: answers.proxyPlat,
+                [REACT_APP_PROXY_PLAT]: answers.proxyPlat,
                 /** 代理请求所需参数 */
-                REACT_APP_PROXY_PARAMS: buildaPrams(answers.proxyEnv, answers.proxyPlat),
+                [REACT_APP_PROXY_PARAMS]: buildaPrams(answers.proxyEnv, answers.proxyPlat),
                 /** 代理域名 */
-                REACT_APP_PROXT_LOGIN_DOMAIN: get(
+                [REACT_APP_PROXT_LOGIN_DOMAIN]: get(
                     ENV_DOMAIN,
                     `${answers.proxyEnv}.${answers.proxyPlat}`
                 ),
@@ -57,4 +64,5 @@ const chooseProxyOptions = async (context: any) => {
     return context;
 };
 
-export { proxtConfig, chooseProxyOptions };
+export default chooseProxyOptions;
+export { proxtConfig, chooseProxyOptions, setupProxy };

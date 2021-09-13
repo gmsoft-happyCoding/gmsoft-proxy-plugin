@@ -117,6 +117,13 @@
     estree-walker "^2.0.1"
     picomatch "^2.2.2"
 
+"@types/connect@*":
+  version "3.4.35"
+  resolved "http://192.168.2.10:8081/repository/npm.gm/@types/connect/-/connect-3.4.35.tgz#5fcf6ae445e4021d1fc2219a4873cc73a3bb2ad1"
+  integrity sha512-cdeYyv4KWoEgpBISTxWvqYsVy444DOqehiF3fM3ne10AmJ62RSyNkUnxMJXHQWRQQX2eR94m5y1IZyDwBjV9FQ==
+  dependencies:
+    "@types/node" "*"
+
 "@types/estree@*":
   version "0.0.47"
   resolved "https://registry.nlark.com/@types/estree/download/@types/estree-0.0.47.tgz?cache=0&sync_timestamp=1621241091866&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40types%2Festree%2Fdownload%2F%40types%2Festree-0.0.47.tgz#d7a51db20f0650efec24cd04994f523d93172ed4"
@@ -126,6 +133,22 @@
   version "0.0.39"
   resolved "https://registry.nlark.com/@types/estree/download/@types/estree-0.0.39.tgz?cache=0&sync_timestamp=1621241091866&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40types%2Festree%2Fdownload%2F%40types%2Festree-0.0.39.tgz#e177e699ee1b8c22d23174caaa7422644389509f"
   integrity sha1-4Xfmme4bjCLSMXTKqnQiZEOJUJ8=
+
+"@types/http-proxy-middleware@0.19.1":
+  version "0.19.1"
+  resolved "http://192.168.2.10:8081/repository/npm.gm/@types/http-proxy-middleware/-/http-proxy-middleware-0.19.1.tgz#042559a6c45a8f1694b3119902f92890d6ba0909"
+  integrity sha512-P4zpWTYFp1qXLjEPnjFVBB1KmR+b9Tt+RnzJxQSW4DTyh1lKDnYZi/Q1DzuupocX+7IYi2W7uIrbNybQg91H6A==
+  dependencies:
+    "@types/connect" "*"
+    "@types/http-proxy" "*"
+    "@types/node" "*"
+
+"@types/http-proxy@*":
+  version "1.17.7"
+  resolved "http://192.168.2.10:8081/repository/npm.gm/@types/http-proxy/-/http-proxy-1.17.7.tgz#30ea85cc2c868368352a37f0d0d3581e24834c6f"
+  integrity sha512-9hdj6iXH64tHSLTY+Vt2eYOGzSogC+JQ2H7bdPWkuh7KXP5qLllWx++t+K9Wk556c3dkDdPws/SpMRi0sdCT1w==
+  dependencies:
+    "@types/node" "*"
 
 "@types/json-schema@^7.0.3":
   version "7.0.7"

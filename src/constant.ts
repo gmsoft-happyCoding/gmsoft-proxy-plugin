@@ -19,3 +19,11 @@ export const ENV_DOMAIN = {
         [PlatType.XCJ]: 'https://www.xcjtest1.gm',
     },
 };
+
+export const REACT_APP_PROXY_PARAMS = 'REACT_APP_PROXY_PARAMS';
+
+export const REACT_APP_PROXY_PLAT = 'REACT_APP_PROXY_PLAT';
+
+export const REACT_APP_PROXY_ENV = 'REACT_APP_PROXY_ENV';
+
+export const REACT_APP_PROXT_LOGIN_DOMAIN = 'REACT_APP_PROXT_LOGIN_DOMAIN';
