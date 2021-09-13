@@ -1,9 +1,12 @@
-import proxy from 'http-proxy-middleware';
 import { proxtConfig } from './proxy';
 
-const config = proxtConfig();
-
 const setupProxy = app => {
+    const nodeWorkPath = process.cwd();
+
+    const proxy = require(`${nodeWorkPath}/node_modules/http-proxy-middleware`);
+
+    const config = proxtConfig();
+
     config.forEach(item => {
         app.use(
             item.path,

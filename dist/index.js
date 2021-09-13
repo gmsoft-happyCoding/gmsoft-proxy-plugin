@@ -2,12 +2,6 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var proxy = require('http-proxy-middleware');
-
-function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
-
-var proxy__default = /*#__PURE__*/_interopDefaultLegacy(proxy);
-
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
 
@@ -1304,7 +1298,7 @@ var ENV_DOMAIN = (_a = {},
 var REACT_APP_PROXY_PARAMS = 'REACT_APP_PROXY_PARAMS';
 var REACT_APP_PROXY_PLAT = 'REACT_APP_PROXY_PLAT';
 var REACT_APP_PROXY_ENV = 'REACT_APP_PROXY_ENV';
-var REACT_APP_PROXT_LOGIN_DOMAIN = 'REACT_APP_PROXT_LOGIN_DOMAIN';
+var REACT_APP_PROXY_LOGIN_DOMAIN = 'REACT_APP_PROXY_LOGIN_DOMAIN';
 
 // 根据平台信息 构建 client_id
 var buildClientId = function (platType) {
@@ -1348,7 +1342,7 @@ var buildaPrams = function (envType, platType) {
 
 var proxtConfig = function () {
     // 代理登录域
-    var proxyDomain = process.env[REACT_APP_PROXT_LOGIN_DOMAIN];
+    var proxyDomain = process.env[REACT_APP_PROXY_LOGIN_DOMAIN];
     var port = process.env.PORT;
     return [
         {
@@ -1386,10 +1380,12 @@ var proxtConfig = function () {
     ];
 };
 
-var config = proxtConfig();
 var setupProxy = function (app) {
+    var nodeWorkPath = process.cwd();
+    var proxy = require(nodeWorkPath + "/node_modules/http-proxy-middleware");
+    var config = proxtConfig();
     config.forEach(function (item) {
-        app.use(item.path, proxy__default['default'](__assign({}, item.proxyConfig)));
+        app.use(item.path, proxy(__assign({}, item.proxyConfig)));
     });
 };
 
@@ -1432,7 +1428,7 @@ var chooseProxyOptions = function (context) { return __awaiter(void 0, void 0, v
                 answers_1 = _a.sent();
                 return [2 /*return*/, produce(context, function (draft) {
                         var _a;
-                        draft.config.envs = __assign(__assign({}, draft.config.envs), (_a = {}, _a[REACT_APP_PROXY_ENV] = answers_1.proxyEnv, _a[REACT_APP_PROXY_PLAT] = answers_1.proxyPlat, _a[REACT_APP_PROXY_PARAMS] = buildaPrams(answers_1.proxyEnv, answers_1.proxyPlat), _a[REACT_APP_PROXT_LOGIN_DOMAIN] = get_1(ENV_DOMAIN, answers_1.proxyEnv + "." + answers_1.proxyPlat), _a));
+                        draft.config.envs = __assign(__assign({}, draft.config.envs), (_a = {}, _a[REACT_APP_PROXY_ENV] = answers_1.proxyEnv, _a[REACT_APP_PROXY_PLAT] = answers_1.proxyPlat, _a[REACT_APP_PROXY_PARAMS] = buildaPrams(answers_1.proxyEnv, answers_1.proxyPlat), _a[REACT_APP_PROXY_LOGIN_DOMAIN] = get_1(ENV_DOMAIN, answers_1.proxyEnv + "." + answers_1.proxyPlat), _a));
                     })];
             case 2: return [2 /*return*/, context];
         }

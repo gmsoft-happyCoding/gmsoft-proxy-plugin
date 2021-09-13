@@ -4,7 +4,7 @@ import {
     REACT_APP_PROXY_PARAMS,
     REACT_APP_PROXY_PLAT,
     REACT_APP_PROXY_ENV,
-    REACT_APP_PROXT_LOGIN_DOMAIN,
+    REACT_APP_PROXY_LOGIN_DOMAIN,
 } from './constant';
 import { buildaPrams } from './utils';
 import { proxtConfig } from './proxy';
@@ -54,7 +54,7 @@ const chooseProxyOptions = async (context: any) => {
                 /** 代理请求所需参数 */
                 [REACT_APP_PROXY_PARAMS]: buildaPrams(answers.proxyEnv, answers.proxyPlat),
                 /** 代理域名 */
-                [REACT_APP_PROXT_LOGIN_DOMAIN]: get(
+                [REACT_APP_PROXY_LOGIN_DOMAIN]: get(
                     ENV_DOMAIN,
                     `${answers.proxyEnv}.${answers.proxyPlat}`
                 ),
