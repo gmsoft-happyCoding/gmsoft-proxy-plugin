@@ -20,9 +20,16 @@ Note:切换成私服 npm 源
 /**
  * @chooseProxyOptions 方法只针对 当前最新版本登录方案
  * @chooseLoginTypeProxyOptions  可选择登录方案(新的 或者 旧的)
+ * @customProxyOptions  自定义 环境配置 以及 环境对应域  @params1 环境配置  @params2 是否可选登录方案
+ * @params1  数据格式   {[代理环境：dev | show | test1]:{[代理平台:GLXT | ZCJ | XCJ | CQSFXY ]:domain}}
+ * @params1  boolean
  * */
 
-const { chooseProxyOptions, chooseLoginTypeProxyOptions } = require('@gmsoft/proxy-plugin');
+const {
+    chooseProxyOptions,
+    chooseLoginTypeProxyOptions,
+    customProxyOptions,
+} = require('@gmsoft/proxy-plugin');
 
 module.exports = {
     envs: {
@@ -31,7 +38,9 @@ module.exports = {
 
         /** ...... **/
     },
-    plugins: [chooseProxyOptions],
+    plugins: [chooseProxyOptions], // 无自定义环境代理 新登录方案
+    plugins: [chooseLoginTypeProxyOptions], // 无自定义环境代理 旧登录方案
+    plugins: [customProxyOptions({ show: { cqsfxy: 'https://www.cqsfxy.com' } })], // 无自定义环境代理 登录方案
 };
 ```
 
