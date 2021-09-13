@@ -8,7 +8,7 @@ export const proxtConfig = () => {
 
     return [
         {
-            path: '/djc-gateway',
+            path: '/djc-gateway/authing/login',
             proxyConfig: {
                 target: proxyDomain,
                 secure: false,
@@ -20,7 +20,19 @@ export const proxtConfig = () => {
             },
         },
         {
-            path: '/gateway',
+            path: '/authing/oauth/authorize',
+            proxyConfig: {
+                target: proxyDomain,
+                secure: false,
+                changeOrigin: true,
+                cookiePathRewrite: '/',
+                cookieDomainRewrite: `http://localhost:${port}`,
+                hostRewrite: `localhost:${port}`,
+                protocolRewrite: 'http',
+            },
+        },
+        {
+            path: '/gateway/v1/login',
             proxyConfig: {
                 target: proxyDomain,
                 secure: false,
