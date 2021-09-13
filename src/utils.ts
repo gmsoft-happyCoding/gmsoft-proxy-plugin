@@ -1,6 +1,7 @@
 import get from 'lodash/get';
 import { EnvType } from './enums/EnvType.enum';
 import { PlatType } from './enums/PlatType.enum';
+import { LoginType } from './enums/LoginType.enum';
 import { ENV_DOMAIN } from './constant';
 
 // 根据平台信息 构建 client_id
@@ -28,8 +29,18 @@ const uriTransformDomain = (uri: string) => {
     return uri;
 };
 
+// 老登录方式的 scope 转换
+const platScopeBuild = (platType: PlatType) => {
+    switch (platType) {
+        case PlatType.XCJ:
+            return PlatType.XCJ;
+        default:
+            return PlatType.ZCJ;
+    }
+};
+
 // 根据 环境 和 平台信息 构建  redirect_uri 和 scope
-export const buildaPrams = (envType: EnvType, platType: PlatType) => {
+export const buildaPrams = (envType: EnvType, platType: PlatType, loginType?: LoginType) => {
     // 获取域
     const uri = get(ENV_DOMAIN, `${envType}.${platType}`);
     if (!uri) {
@@ -44,7 +55,7 @@ export const buildaPrams = (envType: EnvType, platType: PlatType) => {
 
     const common = {
         client_id: clientId,
-        scope: uriTransformDomain(uri),
+        scope: loginType === LoginType.OLD ? platScopeBuild(platType) : uriTransformDomain(uri),
         redirect_uri: `${uri}/gateway/v1/login`,
     };
 

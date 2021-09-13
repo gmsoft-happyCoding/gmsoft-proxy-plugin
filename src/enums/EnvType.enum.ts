@@ -1,10 +1,10 @@
 export enum EnvType {
     /** dev */
-    dev = 'dev',
+    DEV = 'dev',
 
     /** show */
-    show = 'show',
+    SHOW = 'show',
 
     /** test1 */
-    test1 = 'test1',
+    TEST1 = 'test1',
 }

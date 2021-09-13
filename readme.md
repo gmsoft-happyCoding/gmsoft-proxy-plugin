@@ -3,7 +3,7 @@
 ```bash
 $ npm install -dev @gmsoft/proxy-plugin
 
-$ yarn add @gmsoft/proxy-plugin --dev 
+$ yarn add @gmsoft/proxy-plugin --dev
 ```
 
 Note:切换成私服 npm 源
@@ -17,7 +17,12 @@ Note:切换成私服 npm 源
       加入对插件的使用
 
 ```javascript
-const { chooseProxyOptions } = require('@gmsoft/proxy-plugin');
+/**
+ * @chooseProxyOptions 方法只针对 当前最新版本登录方案
+ * @chooseLoginTypeProxyOptions  可选择登录方案(新的 或者 旧的)
+ * */
+
+const { chooseProxyOptions, chooseLoginTypeProxyOptions } = require('@gmsoft/proxy-plugin');
 
 module.exports = {
     envs: {

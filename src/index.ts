@@ -9,34 +9,51 @@ import {
 import { buildaPrams } from './utils';
 import { proxtConfig } from './proxy';
 import { setupProxy } from './setupProxy';
+import { LoginType } from './enums/LoginType.enum';
+import { EnvType } from './enums/EnvType.enum';
+import { PlatType } from './enums/PlatType.enum';
 
-const chooseProxyOptions = async (context: any) => {
+const proxyOptions = (loginType: boolean) => async (context: any) => {
     const { inquirer, produce, pluginOption } = context;
 
     const isDev = process.env.NODE_ENV !== 'production';
 
     const questions = [
+        ...(loginType
+            ? [
+                  {
+                      type: 'list',
+                      name: 'loginType',
+                      message: '请选择登录模式:',
+                      choices: [
+                          { name: '新的(当前test1环境登录)', value: LoginType.NEW },
+                          { name: '旧的(当前show环境登录)', value: LoginType.OLD },
+                      ],
+                      default: LoginType.NEW,
+                  },
+              ]
+            : []),
         {
             type: 'list',
             name: 'proxyEnv',
             message: '请选择代理环境:',
             choices: [
-                { name: 'dev', value: 'dev' },
-                { name: 'show', value: 'show' },
-                { name: 'test1', value: 'test1' },
+                { name: 'dev', value: EnvType.DEV },
+                { name: 'show', value: EnvType.SHOW },
+                { name: 'test1', value: EnvType.TEST1 },
             ],
-            default: 'dev',
+            default: EnvType.DEV,
         },
         {
             type: 'list',
             name: 'proxyPlat',
             message: '请选择代理平台:',
             choices: [
-                { name: 'GLXT', value: 'GLXT' },
-                { name: 'ZCJ', value: 'ZCJ' },
-                { name: 'XCJ', value: 'XCJ' },
+                { name: 'GLXT', value: PlatType.GLXT },
+                { name: 'ZCJ', value: PlatType.ZCJ },
+                { name: 'XCJ', value: PlatType.XCJ },
             ],
-            default: 'GLXT',
+            default: PlatType.GLXT,
         },
     ];
 
@@ -52,7 +69,11 @@ const chooseProxyOptions = async (context: any) => {
                 /** 代理平台 */
                 [REACT_APP_PROXY_PLAT]: answers.proxyPlat,
                 /** 代理请求所需参数 */
-                [REACT_APP_PROXY_PARAMS]: buildaPrams(answers.proxyEnv, answers.proxyPlat),
+                [REACT_APP_PROXY_PARAMS]: buildaPrams(
+                    answers.proxyEnv,
+                    answers.proxyPlat,
+                    answers.loginType
+                ),
                 /** 代理域名 */
                 [REACT_APP_PROXY_LOGIN_DOMAIN]: get(
                     ENV_DOMAIN,
@@ -64,5 +85,10 @@ const chooseProxyOptions = async (context: any) => {
     return context;
 };
 
-export default chooseProxyOptions;
-export { proxtConfig, chooseProxyOptions, setupProxy };
+const chooseLoginTypeProxyOptions = proxyOptions(true);
+
+const chooseProxyOptions = proxyOptions(false);
+
+export default proxyOptions;
+
+export { proxtConfig, chooseProxyOptions, chooseLoginTypeProxyOptions, setupProxy };
