@@ -1,8 +1,8 @@
-import { REACT_APP_PROXT_LOGIN_DOMAIN } from './constant';
+import { REACT_APP_PROXY_LOGIN_DOMAIN } from './constant';
 
 export const proxtConfig = () => {
     // 代理登录域
-    const proxyDomain = process.env[REACT_APP_PROXT_LOGIN_DOMAIN];
+    const proxyDomain = process.env[REACT_APP_PROXY_LOGIN_DOMAIN];
 
     const port = process.env.PORT;
 
