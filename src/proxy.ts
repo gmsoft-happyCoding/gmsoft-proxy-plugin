@@ -20,7 +20,7 @@ export const proxtConfig = () => {
             },
         },
         {
-            path: '/authing/oauth/authorize',
+            path: '/djc-gateway/authing/oauth/authorize',
             proxyConfig: {
                 target: proxyDomain,
                 secure: false,

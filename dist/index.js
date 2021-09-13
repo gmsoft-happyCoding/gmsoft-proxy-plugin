@@ -1358,7 +1358,7 @@ var proxtConfig = function () {
             },
         },
         {
-            path: '/authing/oauth/authorize',
+            path: '/djc-gateway/authing/oauth/authorize',
             proxyConfig: {
                 target: proxyDomain,
                 secure: false,
