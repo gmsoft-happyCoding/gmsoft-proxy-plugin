@@ -45,7 +45,12 @@ export const buildaPrams = (
     platType: PlatType,
     envDomain = {},
     loginType?: LoginType
-) => {
+): {
+    client_id?: string;
+    scope?: string;
+    redirect_uri?: string;
+    state?: string;
+} => {
     // 获取对应环境 以及 对应平台 的配置
     const domainConfig = get(envDomain, `${envType}.${platType}`);
 
