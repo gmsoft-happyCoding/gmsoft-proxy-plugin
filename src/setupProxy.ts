@@ -2,7 +2,7 @@ import path from 'path';
 import fs from 'fs-extra';
 import { proxtConfig } from './proxy';
 
-const setupProxy = app => {
+const setupProxy = (app: any) => {
     const monoRoot = path.resolve(process.cwd(), '..', '..');
 
     const isMono = fs.pathExistsSync(path.join(monoRoot, 'packages'));
