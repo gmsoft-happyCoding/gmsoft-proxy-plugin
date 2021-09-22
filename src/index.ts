@@ -7,6 +7,7 @@ import {
     REACT_APP_PROXY_PLAT,
     REACT_APP_PROXY_ENV,
     REACT_APP_PROXY_LOGIN_DOMAIN,
+    REACT_APP_PROXY_DJC_GATEWAY_DOMAIN,
 } from './constant';
 import { buildaPrams } from './utils';
 import { proxtConfig } from './proxy';
@@ -14,10 +15,13 @@ import { setupProxy } from './setupProxy';
 import { LoginType } from './enums/LoginType.enum';
 import { EnvType } from './enums/EnvType.enum';
 import { PlatType } from './enums/PlatType.enum';
+import type { ProxyConfig } from './type';
 
-const proxyOptions =
-    (envDomain = {}, loginType?: boolean) =>
+const proxyOptions: (proxyConfig?: ProxyConfig) => (context: any) => Promise<any> =
+    (proxyConfig = { envDomain: {}, loginType: false }) =>
     async (context: any) => {
+        const { envDomain, loginType } = proxyConfig;
+
         const { inquirer, produce, pluginOption } = context;
 
         const isDev = process.env.NODE_ENV !== 'production';
@@ -63,6 +67,12 @@ const proxyOptions =
                 .prompt(questions)
                 .then(_answers => ({ ...pluginOption, ..._answers }));
             return produce(context, draft => {
+                // 获取 代理登录
+                const domainConfig = get(
+                    mergeEnvDomain,
+                    `${answers.proxyEnv}.${answers.proxyPlat}`
+                );
+
                 draft.config.envs = {
                     ...draft.config.envs,
                     /** 代理环境 */
@@ -76,20 +86,21 @@ const proxyOptions =
                         mergeEnvDomain,
                         answers.loginType
                     ),
-                    /** 代理域名 */
-                    [REACT_APP_PROXY_LOGIN_DOMAIN]: get(
-                        mergeEnvDomain,
-                        `${answers.proxyEnv}.${answers.proxyPlat}`
-                    ),
+                    /** 大家采网关域名 */
+                    [REACT_APP_PROXY_DJC_GATEWAY_DOMAIN]:
+                        get(domainConfig, 'djcGatewayDomain') || domainConfig,
+                    /** 代理登录域名 */
+                    [REACT_APP_PROXY_LOGIN_DOMAIN]:
+                        get(domainConfig, 'loginDomain') || domainConfig,
                 };
             });
         }
         return context;
     };
 
-const chooseLoginTypeProxyOptions = proxyOptions(true);
+const chooseLoginTypeProxyOptions = proxyOptions();
 
-const chooseProxyOptions = proxyOptions(false);
+const chooseProxyOptions = proxyOptions({ loginType: true });
 
 const customProxyOptions = proxyOptions;
 

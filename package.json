@@ -13,7 +13,7 @@
     "url": "git+https://github.com/gmsoft-happyCoding/gmsoft-proxy-plugin.git"
   },
   "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
+    "registry": "http://192.168.2.10:8081/repository/npm.hosted/"
   },
   "author": "",
   "license": "ISC",

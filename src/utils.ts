@@ -11,9 +11,8 @@ export const buildClientId = (platType: PlatType): string => {
         case PlatType.ZCJ:
             return 'plat@ZCJ';
         case PlatType.XCJ:
-            return 'plat@XCJ';
         default:
-            return '';
+            return 'plat@XCJ';
     }
 };
 
@@ -47,16 +46,19 @@ export const buildaPrams = (
     envDomain = {},
     loginType?: LoginType
 ) => {
-    // 获取域
-    const uri = get(envDomain, `${envType}.${platType}`);
+    // 获取对应环境 以及 对应平台 的配置
+    const domainConfig = get(envDomain, `${envType}.${platType}`);
+
+    // 登录域
+    const uri = get(domainConfig, 'loginDomain') || domainConfig;
     if (!uri) {
-        return false;
+        return {};
     }
 
     const clientId = buildClientId(platType);
 
     if (!clientId) {
-        return false;
+        return {};
     }
 
     const common = {
