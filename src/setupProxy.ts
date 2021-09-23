@@ -1,15 +1,8 @@
-import path from 'path';
-import fs from 'fs-extra';
 import { proxtConfig } from './proxy';
+import { getNodeModulesPath } from './utils';
 
-const setupProxy = (app: any) => {
-    const monoRoot = path.resolve(process.cwd(), '..', '..');
-
-    const isMono = fs.pathExistsSync(path.join(monoRoot, 'packages'));
-
-    const root = isMono ? monoRoot : process.cwd();
-
-    const node_modules = path.join(root, 'node_modules');
+const setupProxy = (app: any): void => {
+    const node_modules = getNodeModulesPath();
 
     const proxy = require(`${node_modules}\\http-proxy-middleware`);
 

@@ -1,6 +1,7 @@
 export interface DomainConfig {
     djcGatewayDomain: string;
     loginDomain: string;
+    platformCode?: string;
 }
 
 export interface PlatConfig {

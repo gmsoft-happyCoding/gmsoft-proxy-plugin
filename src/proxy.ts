@@ -7,6 +7,10 @@ import {
     REACT_APP_PROXY_DJC_GATEWAY_DOMAIN,
 } from './constant';
 
+// eslint-disable-next-line max-len
+const domainRegx =
+    /(http(s)?:)?\/\/(?:[a-z0-9](?:[a-z0-9-_]{0,61}[a-z0-9])?(\.|:))+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]/;
+
 export const proxtConfig = () => {
     // 代理登录域
     const proxyDomain = process.env[REACT_APP_PROXY_LOGIN_DOMAIN];
@@ -44,6 +48,18 @@ export const proxtConfig = () => {
                 cookieDomainRewrite: `http://localhost:${port}`,
                 hostRewrite: `localhost:${port}`,
                 protocolRewrite: 'http',
+                onProxyRes: (proxyRes: any) => {
+                    const headerInLocation = proxyRes.headers.location;
+
+                    const requestBaseUrl = domainRegx.exec(headerInLocation || '');
+
+                    const reWriteLocation = headerInLocation.replace(
+                        requestBaseUrl ? new RegExp(requestBaseUrl[0]) : '',
+                        `http://localhost:${port}`
+                    );
+
+                    proxyRes.headers.location = reWriteLocation;
+                },
             },
         },
         {

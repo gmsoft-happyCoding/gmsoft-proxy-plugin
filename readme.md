@@ -20,10 +20,75 @@ Note:切换成私服 npm 源
 /**
  * @chooseProxyOptions 方法只针对 当前最新版本登录方案
  * @chooseLoginTypeProxyOptions  可选择登录方案(新的 或者 旧的)
- * @customProxyOptions  自定义 环境配置 以及 环境对应域  @params1 环境配置  @params2 是否可选登录方案
- * @params1  数据格式   {[代理环境：dev | show | test1]:{[代理平台:GLXT | ZCJ | XCJ | CQSFXY ]:domain}}
- * @params1  boolean
+ * @customProxyOptions  自定义 环境配置 以及 环境对应域  @params 可选
  * */
+
+/**
+ * @params {envDomain:Object,loginType:boolean}
+ */
+
+/**
+ * @envDomain
+ */
+
+/** 已环境枚举为 key 构建 平台枚举为key的配置 */
+enum EnvType {
+    /** dev */
+    DEV = 'dev',
+
+    /** show */
+    SHOW = 'show',
+
+    /** test1 */
+    TEST1 = 'test1',
+}
+
+/** 已平台枚举为key的配置 */
+enum PlatType {
+    /** GLXT */
+    GLXT = 'GLXT',
+
+    /** ZCJ */
+    ZCJ = 'ZCJ',
+
+    /** XCJ */
+    XCJ = 'XCJ',
+}
+
+
+/** 此为默认对应环境以及环境中平台的配置信息 */
+/**
+ * @Config string | {djcGatewayDomain:string,loginDomain:string,platformCode?:string}
+ */
+const ENV_DOMAIN = {
+    [EnvType.DEV]: {
+        [PlatType.GLXT]: 'http://192.168.2.21:31880',
+        [PlatType.ZCJ]: 'https://www.cqzcjdev1.gm',
+        [PlatType.XCJ]: 'https://www.xcjdev1.gm',
+    },
+    [EnvType.SHOW]: {
+        [PlatType.GLXT]: 'http://192.168.2.20:31880',
+        [PlatType.ZCJ]: 'https://www.gpwbeta.com',
+        [PlatType.XCJ]: {
+            djcGatewayDomain: 'https://www.djcshow.gm',
+            loginDomain: 'https://www.cqzcjshow.com',
+        },
+    },
+    [EnvType.TEST1]: {
+        [PlatType.GLXT]: 'http://192.168.2.22:31880',
+        [PlatType.ZCJ]: 'https://www.cqzcjtest1.gm',
+        [PlatType.XCJ]: {
+            djcGatewayDomain: 'https://www.djc360.com',
+            loginDomain: 'https://www.xcj360.com',
+        },
+    },
+};
+
+
+/**
+ * @loginType boolean;// 是否可选择登录方案   默认：false
+ * */
+
 
 const {
     chooseProxyOptions,
@@ -38,9 +103,25 @@ module.exports = {
 
         /** ...... **/
     },
+    /** 重要语句 开始 */
+    /** 方案1 */
     plugins: [chooseProxyOptions], // 无自定义环境代理 新登录方案
+
+    /** 方案2 */
     plugins: [chooseLoginTypeProxyOptions], // 无自定义环境代理 旧登录方案
-    plugins: [customProxyOptions({ show: { cqsfxy: 'https://www.cqsfxy.com' } })], // 无自定义环境代理 登录方案
+
+    /** 方案3 */
+    // 无自定义环境代理 登录方案
+    plugins: [customProxyOptions({envDomain: {show: {
+          cqsgaj: {
+            djcGatewayDomain: 'https://www.djcshow.gm',  // djc-gateway网关部署域名
+            loginDomain: 'https://cqsgaj.cqzcjshow.com', // 需要登录的域
+            platformCode: 'cqsgaj.cqzcjshow.com',  // 私有域 配置的 平台 code 用于 登录请求
+          },
+         }
+        },loginType:true })],
+
+    /** 重要语句 结束 */
 };
 ```
 
@@ -55,7 +136,9 @@ before(app, server) {
 
       app.use(errorOverlayMiddleware());
 
+      /* 重要插入语句 开始 */
       setupProxy(app);  // 插入 插件 代理配置
+      /* 重要插入语句 结束 */
 
       if (fs.existsSync(paths.proxySetup)) {
         require(paths.proxySetup)(app);
@@ -82,6 +165,7 @@ const App = () => {
             <React.Suspense fallback={<Loading />}>
                 <Router history={stateContainer._history}>
                     <Switch>
+                        {/* 重要语句 开始 */}
                         {process.env.NODE_ENV === 'development' && (
                             <Route
                                 path="/"
@@ -94,6 +178,7 @@ const App = () => {
                                 )}
                             />
                         )}
+                        {/* 重要语句 结束 */}
                         <Route path="/" component={React.lazy(() => import('./app/Home'))} />
                     </Switch>
                 </Router>

@@ -4032,112 +4032,6 @@ var REACT_APP_PROXY_DJC_GATEWAY_DOMAIN = 'REACT_APP_PROXY_DJC_GATEWAY_DOMAIN';
 // 登录所在域
 var REACT_APP_PROXY_LOGIN_DOMAIN = 'REACT_APP_PROXY_LOGIN_DOMAIN';
 
-var LoginType;
-(function (LoginType) {
-    /** 新的 */
-    LoginType["NEW"] = "new";
-    /** 旧的 */
-    LoginType["OLD"] = "old";
-})(LoginType || (LoginType = {}));
-
-// 根据平台信息 构建 client_id
-var buildClientId = function (platType) {
-    switch (platType) {
-        case PlatType.GLXT:
-            return 'ZCJ@PM';
-        case PlatType.ZCJ:
-            return 'plat@ZCJ';
-        case PlatType.XCJ:
-        default:
-            return 'plat@XCJ';
-    }
-};
-// 将uri地址转换为域名
-var uriTransformDomain = function (uri) {
-    var repalceGrpup = /(http(s)?:)\/\//.exec(uri);
-    if (repalceGrpup) {
-        return uri.replace(repalceGrpup ? new RegExp(repalceGrpup[0]) : '', '');
-    }
-    return uri;
-};
-// 老登录方式的 scope 转换
-var platScopeBuild = function (platType) {
-    switch (platType) {
-        case PlatType.ZCJ:
-        case PlatType.GLXT:
-            return PlatType.ZCJ;
-        case PlatType.XCJ:
-        default:
-            return PlatType.XCJ;
-    }
-};
-// 根据 环境 和 平台信息 构建  redirect_uri 和 scope
-var buildaPrams = function (envType, platType, envDomain, loginType) {
-    if (envDomain === void 0) { envDomain = {}; }
-    // 获取对应环境 以及 对应平台 的配置
-    var domainConfig = get_1(envDomain, envType + "." + platType);
-    // 登录域
-    var uri = get_1(domainConfig, 'loginDomain') || domainConfig;
-    if (!uri) {
-        return {};
-    }
-    var clientId = buildClientId(platType);
-    if (!clientId) {
-        return {};
-    }
-    var common = {
-        client_id: clientId,
-        scope: loginType === LoginType.OLD ? platScopeBuild(platType) : uriTransformDomain(uri),
-        redirect_uri: uri + "/gateway/v1/login",
-    };
-    return __assign(__assign({}, common), { state: JSON.stringify(common) });
-};
-
-var proxtConfig = function () {
-    // 代理登录域
-    var proxyDomain = process.env[REACT_APP_PROXY_LOGIN_DOMAIN];
-    // 代理大家采网关域
-    var proxyDjcGatewayDomain = process.env[REACT_APP_PROXY_DJC_GATEWAY_DOMAIN];
-    var port = process.env.PORT;
-    // 代理配置
-    var proxyConfig = require(path__default['default'].resolve(process.cwd(), './project-config/common/proxy'));
-    var proxyGroup = get_1(proxyConfig, REACT_APP_PROXY_ENV + "." + REACT_APP_PROXY_PLAT, []);
-    return __spreadArray([
-        {
-            path: '/djc-gateway/authing/login',
-            proxyConfig: {
-                target: proxyDjcGatewayDomain,
-                secure: false,
-                changeOrigin: true,
-                cookiePathRewrite: '/',
-                cookieDomainRewrite: "http://localhost:" + port,
-                hostRewrite: "localhost:" + port,
-                protocolRewrite: 'http',
-            },
-        },
-        {
-            path: '/djc-gateway/authing/oauth/authorize',
-            proxyConfig: {
-                target: proxyDjcGatewayDomain,
-                secure: false,
-                changeOrigin: true,
-                cookiePathRewrite: '/',
-                cookieDomainRewrite: "http://localhost:" + port,
-                hostRewrite: "localhost:" + port,
-                protocolRewrite: 'http',
-            },
-        },
-        {
-            path: '/gateway/v1/login',
-            proxyConfig: {
-                target: proxyDomain,
-                secure: false,
-                changeOrigin: true,
-            },
-        }
-    ], proxyGroup);
-};
-
 var fromCallback = function (fn) {
   return Object.defineProperty(function (...args) {
     if (typeof args[args.length - 1] === 'function') fn.apply(this, args);
@@ -6890,11 +6784,132 @@ var lib = {
   ...remove_1
 };
 
-var setupProxy = function (app) {
-    var monoRoot = path__default['default'].resolve(process.cwd(), '..', '..');
+var LoginType;
+(function (LoginType) {
+    /** 新的 */
+    LoginType["NEW"] = "new";
+    /** 旧的 */
+    LoginType["OLD"] = "old";
+})(LoginType || (LoginType = {}));
+
+// 根据平台信息 构建 client_id
+var buildClientId = function (platType, platformCode) {
+    switch (platType) {
+        case PlatType.GLXT:
+            return 'ZCJ@PM';
+        case PlatType.ZCJ:
+            return 'plat@ZCJ';
+        case PlatType.XCJ:
+            return 'plat@XCJ';
+        default:
+            return "plat@" + platformCode;
+    }
+};
+// 将uri地址转换为域名
+var uriTransformDomain = function (uri) {
+    var repalceGrpup = /(http(s)?:)\/\//.exec(uri);
+    if (repalceGrpup) {
+        return uri.replace(repalceGrpup ? new RegExp(repalceGrpup[0]) : '', '');
+    }
+    return uri;
+};
+// 老登录方式的 scope 转换
+var platScopeBuild = function (platType, uri) {
+    switch (platType) {
+        case PlatType.ZCJ:
+        case PlatType.GLXT:
+            return PlatType.ZCJ;
+        case PlatType.XCJ:
+            return PlatType.XCJ;
+        default:
+            return uriTransformDomain(uri);
+    }
+};
+// 根据 环境 和 平台信息 构建  redirect_uri 和 scope
+var buildaPrams = function (envType, platType, envDomain, loginType, platformCode) {
+    if (envDomain === void 0) { envDomain = {}; }
+    // 获取对应环境 以及 对应平台 的配置
+    var domainConfig = get_1(envDomain, envType + "." + platType);
+    // 登录域
+    var uri = get_1(domainConfig, 'loginDomain') || domainConfig;
+    if (!uri) {
+        return {};
+    }
+    var clientId = buildClientId(platType, platformCode);
+    if (!clientId) {
+        return {};
+    }
+    var common = {
+        client_id: clientId,
+        scope: loginType === LoginType.OLD ? platScopeBuild(platType, uri) : uriTransformDomain(uri),
+        redirect_uri: uri + "/gateway/v1/login",
+    };
+    return __assign(__assign({}, common), { state: JSON.stringify(common) });
+};
+var getNodeModulesPath = function () {
+    var nodeWorkPath = process.cwd();
+    var monoRoot = path__default['default'].resolve(nodeWorkPath, '..', '..');
     var isMono = lib.pathExistsSync(path__default['default'].join(monoRoot, 'packages'));
-    var root = isMono ? monoRoot : process.cwd();
+    var root = isMono ? monoRoot : nodeWorkPath;
     var node_modules = path__default['default'].join(root, 'node_modules');
+    return node_modules;
+};
+
+// eslint-disable-next-line max-len
+var domainRegx = /(http(s)?:)?\/\/(?:[a-z0-9](?:[a-z0-9-_]{0,61}[a-z0-9])?(\.|:))+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]/;
+var proxtConfig = function () {
+    // 代理登录域
+    var proxyDomain = process.env[REACT_APP_PROXY_LOGIN_DOMAIN];
+    // 代理大家采网关域
+    var proxyDjcGatewayDomain = process.env[REACT_APP_PROXY_DJC_GATEWAY_DOMAIN];
+    var port = process.env.PORT;
+    // 代理配置
+    var proxyConfig = require(path__default['default'].resolve(process.cwd(), './project-config/common/proxy'));
+    var proxyGroup = get_1(proxyConfig, REACT_APP_PROXY_ENV + "." + REACT_APP_PROXY_PLAT, []);
+    return __spreadArray([
+        {
+            path: '/djc-gateway/authing/login',
+            proxyConfig: {
+                target: proxyDjcGatewayDomain,
+                secure: false,
+                changeOrigin: true,
+                cookiePathRewrite: '/',
+                cookieDomainRewrite: "http://localhost:" + port,
+                hostRewrite: "localhost:" + port,
+                protocolRewrite: 'http',
+            },
+        },
+        {
+            path: '/djc-gateway/authing/oauth/authorize',
+            proxyConfig: {
+                target: proxyDjcGatewayDomain,
+                secure: false,
+                changeOrigin: true,
+                cookiePathRewrite: '/',
+                cookieDomainRewrite: "http://localhost:" + port,
+                hostRewrite: "localhost:" + port,
+                protocolRewrite: 'http',
+                onProxyRes: function (proxyRes) {
+                    var headerInLocation = proxyRes.headers.location;
+                    var requestBaseUrl = domainRegx.exec(headerInLocation || '');
+                    var reWriteLocation = headerInLocation.replace(requestBaseUrl ? new RegExp(requestBaseUrl[0]) : '', "http://localhost:" + port);
+                    proxyRes.headers.location = reWriteLocation;
+                },
+            },
+        },
+        {
+            path: '/gateway/v1/login',
+            proxyConfig: {
+                target: proxyDomain,
+                secure: false,
+                changeOrigin: true,
+            },
+        }
+    ], proxyGroup);
+};
+
+var setupProxy = function (app) {
+    var node_modules = getNodeModulesPath();
     var proxy = require(node_modules + "\\http-proxy-middleware");
     var config = proxtConfig();
     config.forEach(function (item) {
@@ -6955,7 +6970,9 @@ var proxyOptions = function (proxyConfig) {
                             var _a;
                             // 获取 代理登录
                             var domainConfig = get_1(mergeEnvDomain, answers_1.proxyEnv + "." + answers_1.proxyPlat);
-                            draft.config.envs = __assign(__assign({}, draft.config.envs), (_a = {}, _a[REACT_APP_PROXY_ENV] = answers_1.proxyEnv, _a[REACT_APP_PROXY_PLAT] = answers_1.proxyPlat, _a[REACT_APP_PROXY_PARAMS] = buildaPrams(answers_1.proxyEnv, answers_1.proxyPlat, mergeEnvDomain, answers_1.loginType), _a[REACT_APP_PROXY_DJC_GATEWAY_DOMAIN] = get_1(domainConfig, 'djcGatewayDomain') || domainConfig, _a[REACT_APP_PROXY_LOGIN_DOMAIN] = get_1(domainConfig, 'loginDomain') || domainConfig, _a));
+                            // 获取代理平台的平台编码
+                            var platformCode = get_1(domainConfig, 'platformCode');
+                            draft.config.envs = __assign(__assign({}, draft.config.envs), (_a = {}, _a[REACT_APP_PROXY_ENV] = answers_1.proxyEnv, _a[REACT_APP_PROXY_PLAT] = answers_1.proxyPlat, _a[REACT_APP_PROXY_PARAMS] = buildaPrams(answers_1.proxyEnv, answers_1.proxyPlat, mergeEnvDomain, answers_1.loginType, platformCode), _a[REACT_APP_PROXY_DJC_GATEWAY_DOMAIN] = get_1(domainConfig, 'djcGatewayDomain') || domainConfig, _a[REACT_APP_PROXY_LOGIN_DOMAIN] = get_1(domainConfig, 'loginDomain') || domainConfig, _a));
                         })];
                 case 2: return [2 /*return*/, context];
             }

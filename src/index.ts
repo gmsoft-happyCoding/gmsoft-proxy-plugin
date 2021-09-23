@@ -73,6 +73,9 @@ const proxyOptions: (proxyConfig?: ProxyConfig) => (context: any) => Promise<any
                     `${answers.proxyEnv}.${answers.proxyPlat}`
                 );
 
+                // 获取代理平台的平台编码
+                const platformCode = get(domainConfig, 'platformCode');
+
                 draft.config.envs = {
                     ...draft.config.envs,
                     /** 代理环境 */
@@ -84,7 +87,8 @@ const proxyOptions: (proxyConfig?: ProxyConfig) => (context: any) => Promise<any
                         answers.proxyEnv,
                         answers.proxyPlat,
                         mergeEnvDomain,
-                        answers.loginType
+                        answers.loginType,
+                        platformCode as string
                     ),
                     /** 大家采网关域名 */
                     [REACT_APP_PROXY_DJC_GATEWAY_DOMAIN]:
