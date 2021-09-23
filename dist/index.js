@@ -6979,8 +6979,8 @@ var proxyOptions = function (proxyConfig) {
         });
     }); };
 };
-var chooseLoginTypeProxyOptions = proxyOptions();
-var chooseProxyOptions = proxyOptions({ loginType: true });
+var chooseLoginTypeProxyOptions = proxyOptions({ loginType: true });
+var chooseProxyOptions = proxyOptions();
 var customProxyOptions = proxyOptions;
 
 exports.chooseLoginTypeProxyOptions = chooseLoginTypeProxyOptions;

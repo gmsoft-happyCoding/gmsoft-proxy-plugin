@@ -102,9 +102,9 @@ const proxyOptions: (proxyConfig?: ProxyConfig) => (context: any) => Promise<any
         return context;
     };
 
-const chooseLoginTypeProxyOptions = proxyOptions();
+const chooseLoginTypeProxyOptions = proxyOptions({ loginType: true });
 
-const chooseProxyOptions = proxyOptions({ loginType: true });
+const chooseProxyOptions = proxyOptions();
 
 const customProxyOptions = proxyOptions;
 
