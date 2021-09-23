@@ -23,7 +23,11 @@ export const proxtConfig = () => {
     // 代理配置
     const proxyConfig = require(path.resolve(process.cwd(), './project-config/common/proxy'));
 
-    const proxyGroup = get(proxyConfig, `${REACT_APP_PROXY_ENV}.${REACT_APP_PROXY_PLAT}`, []);
+    const proxyGroup = get(
+        proxyConfig,
+        `${process.env[REACT_APP_PROXY_ENV]}.${process.env[REACT_APP_PROXY_PLAT]}`,
+        []
+    );
 
     return [
         {

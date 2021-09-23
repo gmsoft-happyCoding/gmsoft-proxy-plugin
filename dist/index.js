@@ -6865,7 +6865,7 @@ var proxtConfig = function () {
     var port = process.env.PORT;
     // 代理配置
     var proxyConfig = require(path__default['default'].resolve(process.cwd(), './project-config/common/proxy'));
-    var proxyGroup = get_1(proxyConfig, REACT_APP_PROXY_ENV + "." + REACT_APP_PROXY_PLAT, []);
+    var proxyGroup = get_1(proxyConfig, process.env[REACT_APP_PROXY_ENV] + "." + process.env[REACT_APP_PROXY_PLAT], []);
     return __spreadArray([
         {
             path: '/djc-gateway/authing/login',
