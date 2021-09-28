@@ -199,7 +199,7 @@ export default App;
 
 ## 2、REACT_APP_DJC_GATEWAY_BASE 环境变量 需设置为 /djc-gateway
 
-## whoAmIhost 需设置为 process.env.EACT_APP_PROXY_LOGIN_DOMAIN_NOT_PROTOCOL（插件已自动写入）
+## 3、whoAmIhost 需设置为 process.env.EACT_APP_PROXY_LOGIN_DOMAIN_NOT_PROTOCOL（插件已自动写入）
 
 ```javascript
 const authSdkUserInfo: CompatibleMeI = yield call(
