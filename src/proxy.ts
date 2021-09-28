@@ -21,7 +21,7 @@ export const proxtConfig = () => {
 
     const port = process.env.PORT;
 
-    const proxyPath = path.resolve(process.cwd(), './project-config/common/proxy');
+    const proxyPath = path.resolve(process.cwd(), './project-config/common/proxy.js');
 
     // 代理配置
     const proxyConfig = fs.existsSync(proxyPath) ? require(proxyPath) : {};

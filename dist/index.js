@@ -6865,7 +6865,7 @@ var proxtConfig = function () {
     // 代理大家采网关域
     var proxyDjcGatewayDomain = process.env[REACT_APP_PROXY_DJC_GATEWAY_DOMAIN];
     var port = process.env.PORT;
-    var proxyPath = path__default['default'].resolve(process.cwd(), './project-config/common/proxy');
+    var proxyPath = path__default['default'].resolve(process.cwd(), './project-config/common/proxy.js');
     // 代理配置
     var proxyConfig = fs__default['default'].existsSync(proxyPath) ? require(proxyPath) : {};
     var proxyGroup = get_1(proxyConfig, process.env[REACT_APP_PROXY_ENV] + "." + process.env[REACT_APP_PROXY_PLAT], []);
