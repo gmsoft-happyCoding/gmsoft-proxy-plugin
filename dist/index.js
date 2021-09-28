@@ -4031,6 +4031,8 @@ var REACT_APP_PROXY_ENV = 'REACT_APP_PROXY_ENV';
 var REACT_APP_PROXY_DJC_GATEWAY_DOMAIN = 'REACT_APP_PROXY_DJC_GATEWAY_DOMAIN';
 // 登录所在域
 var REACT_APP_PROXY_LOGIN_DOMAIN = 'REACT_APP_PROXY_LOGIN_DOMAIN';
+// 登录 所在域 不带协议
+var REACT_APP_PROXY_LOGIN_DOMAIN_NOT_PROTOCOL = 'REACT_APP_PROXY_LOGIN_DOMAIN_NOT_PROTOCOL';
 
 var fromCallback = function (fn) {
   return Object.defineProperty(function (...args) {
@@ -6863,10 +6865,19 @@ var proxtConfig = function () {
     // 代理大家采网关域
     var proxyDjcGatewayDomain = process.env[REACT_APP_PROXY_DJC_GATEWAY_DOMAIN];
     var port = process.env.PORT;
+    var proxyPath = path__default['default'].resolve(process.cwd(), './project-config/common/proxy');
     // 代理配置
-    var proxyConfig = require(path__default['default'].resolve(process.cwd(), './project-config/common/proxy'));
+    var proxyConfig = fs__default['default'].existsSync(proxyPath) ? require(proxyPath) : {};
     var proxyGroup = get_1(proxyConfig, process.env[REACT_APP_PROXY_ENV] + "." + process.env[REACT_APP_PROXY_PLAT], []);
     return __spreadArray([
+        {
+            path: '/djc-gateway/djcsupport/domainname/getPlatformConfigure',
+            proxyConfig: {
+                target: proxyDjcGatewayDomain,
+                secure: false,
+                changeOrigin: true,
+            },
+        },
         {
             path: '/djc-gateway/authing/login',
             proxyConfig: {
@@ -6901,6 +6912,14 @@ var proxtConfig = function () {
             path: '/gateway/v1/login',
             proxyConfig: {
                 target: proxyDomain,
+                secure: false,
+                changeOrigin: true,
+            },
+        },
+        {
+            path: '/gateway/v1/user',
+            proxyConfig: {
+                target: proxyDjcGatewayDomain,
                 secure: false,
                 changeOrigin: true,
             },
@@ -6972,7 +6991,7 @@ var proxyOptions = function (proxyConfig) {
                             var domainConfig = get_1(mergeEnvDomain, answers_1.proxyEnv + "." + answers_1.proxyPlat);
                             // 获取代理平台的平台编码
                             var platformCode = get_1(domainConfig, 'platformCode');
-                            draft.config.envs = __assign(__assign({}, draft.config.envs), (_a = {}, _a[REACT_APP_PROXY_ENV] = answers_1.proxyEnv, _a[REACT_APP_PROXY_PLAT] = answers_1.proxyPlat, _a[REACT_APP_PROXY_PARAMS] = buildaPrams(answers_1.proxyEnv, answers_1.proxyPlat, mergeEnvDomain, answers_1.loginType, platformCode), _a[REACT_APP_PROXY_DJC_GATEWAY_DOMAIN] = get_1(domainConfig, 'djcGatewayDomain') || domainConfig, _a[REACT_APP_PROXY_LOGIN_DOMAIN] = get_1(domainConfig, 'loginDomain') || domainConfig, _a));
+                            draft.config.envs = __assign(__assign({}, draft.config.envs), (_a = {}, _a[REACT_APP_PROXY_ENV] = answers_1.proxyEnv, _a[REACT_APP_PROXY_PLAT] = answers_1.proxyPlat, _a[REACT_APP_PROXY_PARAMS] = buildaPrams(answers_1.proxyEnv, answers_1.proxyPlat, mergeEnvDomain, answers_1.loginType, platformCode), _a[REACT_APP_PROXY_DJC_GATEWAY_DOMAIN] = get_1(domainConfig, 'djcGatewayDomain') || domainConfig, _a[REACT_APP_PROXY_LOGIN_DOMAIN] = get_1(domainConfig, 'loginDomain') || domainConfig, _a[REACT_APP_PROXY_LOGIN_DOMAIN_NOT_PROTOCOL] = (get_1(domainConfig, 'loginDomain') || domainConfig).replace(/^(http:|https:)(\/)*/, ''), _a));
                         })];
                 case 2: return [2 /*return*/, context];
             }

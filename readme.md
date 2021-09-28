@@ -19,7 +19,7 @@ Note:切换成私服 npm 源
 ```javascript
 /**
  * @chooseProxyOptions 方法只针对 当前最新版本登录方案
- * @chooseLoginTypeProxyOptions  可选择登录方案(新的 或者 旧的)
+ * @chooseLoginTypeProxyOptions  可选择登录方案(新的 或者 旧的)  即将废弃
  * @customProxyOptions  自定义 环境配置 以及 环境对应域  @params 可选
  * */
 
@@ -107,8 +107,8 @@ module.exports = {
     /** 方案1 */
     plugins: [chooseProxyOptions], // 无自定义环境代理 新登录方案
 
-    /** 方案2 */
-    plugins: [chooseLoginTypeProxyOptions], // 无自定义环境代理 旧登录方案
+    /** 方案2  即将废弃 */
+    plugins: [chooseLoginTypeProxyOptions], // 无自定义环境代理 可选登录方案
 
     /** 方案3 */
     // 无自定义环境代理 登录方案
@@ -174,6 +174,10 @@ const App = () => {
                                     <GmsoftCloudComponent
                                         componentName="DevLogin"
                                         loginParams={process.env.REACT_APP_PROXY_PARAMS}
+                                        djcGatewayDomain={
+                                            process.env.REACT_APP_PROXY_DJC_GATEWAY_DOMAIN
+                                        }
+                                        loginSuccessRedirectUri="/home"
                                     />
                                 )}
                             />
@@ -187,4 +191,24 @@ const App = () => {
     );
 };
 export default App;
+```
+
+## 注意：对于使用 auth-sdk 获取用户信息 再开发环境有如下配置
+
+## 1、不能传递 origin 参数 传递后无法截获请求
+
+## 2、REACT_APP_DJC_GATEWAY_BASE 环境变量 需设置为 /djc-gateway
+
+## whoAmIhost 需设置为 process.env.EACT_APP_PROXY_LOGIN_DOMAIN_NOT_PROTOCOL（插件已自动写入）
+
+```javascript
+const authSdkUserInfo: CompatibleMeI = yield call(
+        () =>
+          requestMeTrySSO({
+            djcGatewayBaseUrl: process.env.REACT_APP_DJC_GATEWAY_BASE, // 必须设置为  /djc-gateway
+            dispatch: stateContainer._store.dispatch,
+            whoAmIhost: process.env.REACT_APP_PROXY_LOGIN_DOMAIN_NOT_PROTOCOL,// 必须传递
+          }),
+        {}
+      );
 ```

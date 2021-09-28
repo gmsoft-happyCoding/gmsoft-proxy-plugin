@@ -1,4 +1,5 @@
 import path from 'path';
+import fs from 'fs';
 import get from 'lodash/get';
 import {
     REACT_APP_PROXY_ENV,
@@ -20,8 +21,10 @@ export const proxtConfig = () => {
 
     const port = process.env.PORT;
 
+    const proxyPath = path.resolve(process.cwd(), './project-config/common/proxy');
+
     // 代理配置
-    const proxyConfig = require(path.resolve(process.cwd(), './project-config/common/proxy'));
+    const proxyConfig = fs.existsSync(proxyPath) ? require(proxyPath) : {};
 
     const proxyGroup = get(
         proxyConfig,
@@ -30,6 +33,14 @@ export const proxtConfig = () => {
     );
 
     return [
+        {
+            path: '/djc-gateway/djcsupport/domainname/getPlatformConfigure',
+            proxyConfig: {
+                target: proxyDjcGatewayDomain,
+                secure: false,
+                changeOrigin: true,
+            },
+        },
         {
             path: '/djc-gateway/authing/login',
             proxyConfig: {
@@ -70,6 +81,14 @@ export const proxtConfig = () => {
             path: '/gateway/v1/login',
             proxyConfig: {
                 target: proxyDomain,
+                secure: false,
+                changeOrigin: true,
+            },
+        },
+        {
+            path: '/gateway/v1/user',
+            proxyConfig: {
+                target: proxyDjcGatewayDomain,
                 secure: false,
                 changeOrigin: true,
             },

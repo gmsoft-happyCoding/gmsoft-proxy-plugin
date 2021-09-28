@@ -8,6 +8,7 @@ import {
     REACT_APP_PROXY_ENV,
     REACT_APP_PROXY_LOGIN_DOMAIN,
     REACT_APP_PROXY_DJC_GATEWAY_DOMAIN,
+    REACT_APP_PROXY_LOGIN_DOMAIN_NOT_PROTOCOL,
 } from './constant';
 import { buildaPrams } from './utils';
 import { proxtConfig } from './proxy';
@@ -93,9 +94,13 @@ const proxyOptions: (proxyConfig?: ProxyConfig) => (context: any) => Promise<any
                     /** 大家采网关域名 */
                     [REACT_APP_PROXY_DJC_GATEWAY_DOMAIN]:
                         get(domainConfig, 'djcGatewayDomain') || domainConfig,
-                    /** 代理登录域名 */
+                    /** 代理登录域名  带协议 */
                     [REACT_APP_PROXY_LOGIN_DOMAIN]:
                         get(domainConfig, 'loginDomain') || domainConfig,
+                    /** 代理登录域名 不带协议 */
+                    [REACT_APP_PROXY_LOGIN_DOMAIN_NOT_PROTOCOL]: (
+                        (get(domainConfig, 'loginDomain') || domainConfig) as string
+                    ).replace(/^(http:|https:)(\/)*/, ''),
                 };
             });
         }
