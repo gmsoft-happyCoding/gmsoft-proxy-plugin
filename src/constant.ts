@@ -20,8 +20,8 @@ export const ENV_DOMAIN = {
         [PlatType.GLXT]: 'http://192.168.2.22:31880',
         [PlatType.ZCJ]: 'https://www.cqzcjtest1.gm',
         [PlatType.XCJ]: {
-            djcGatewayDomain: 'https://www.djc360.com',
-            loginDomain: 'https://www.xcj360.com',
+            djcGatewayDomain: 'https://www.djctest1.gm',
+            loginDomain: 'https://www.xcjtest1.gm',
         },
     },
 };
