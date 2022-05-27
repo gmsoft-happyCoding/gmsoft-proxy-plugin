@@ -2,6 +2,12 @@ import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 
 export type Channels = 'ipc-example';
 
+const { exec, execFile, spawn } = require('child_process');
+
+const path = require('path');
+
+// console.log(global.process);
+
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: {
     sendMessage(channel: Channels, args: unknown[]) {
@@ -17,5 +23,14 @@ contextBridge.exposeInMainWorld('electron', {
     once(channel: Channels, func: (...args: unknown[]) => void) {
       ipcRenderer.once(channel, (_event, ...args) => func(...args));
     },
+  },
+  nodeVersion: process.version,
+  startNode: () => {
+    execFile('node', ['./proxy-service.js'], (error, stdout, stderr) => {
+      if (error) {
+        throw error;
+      }
+      console.log(stdout);
+    });
   },
 });

@@ -11,6 +11,8 @@ declare global {
         ): (() => void) | undefined;
         once(channel: string, func: (...args: unknown[]) => void): void;
       };
+      nodeVersion: string;
+      startNode: () => void;
     };
   }
 }
