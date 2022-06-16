@@ -19,11 +19,14 @@ const configuration: webpack.Configuration = {
 
   target: 'electron-preload',
 
-  entry: path.join(webpackPaths.srcMainPath, 'preload.ts'),
+  entry: {
+    preload: path.join(webpackPaths.srcMainPath, 'preload.ts'),
+    'proxy-service': path.join(webpackPaths.srcMainPath, 'proxy-service.ts'),
+  },
 
   output: {
     path: webpackPaths.dllPath,
-    filename: 'preload.js',
+    filename: '[name].js',
   },
 
   plugins: [

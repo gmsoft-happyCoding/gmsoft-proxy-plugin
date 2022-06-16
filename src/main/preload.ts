@@ -26,11 +26,21 @@ contextBridge.exposeInMainWorld('electron', {
   },
   nodeVersion: process.version,
   startNode: () => {
-    execFile('node', ['./proxy-service.js'], (error, stdout, stderr) => {
-      if (error) {
-        throw error;
+    console.log(path.join(__dirname, './proxy-service.js'));
+
+    exec(
+      `node ${path.join(__dirname, './proxy-service.js')}`,
+      (error, stdout, stderr) => {
+        console.log('已执行');
+
+        if (error) {
+          console.log('错误');
+
+          throw error;
+        }
+
+        console.log(stdout);
       }
-      console.log(stdout);
-    });
+    );
   },
 });

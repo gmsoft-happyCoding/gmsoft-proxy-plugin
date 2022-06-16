@@ -33,7 +33,7 @@ const configuration: webpack.Configuration = {
   target: ['web', 'electron-renderer'],
 
   entry: {
-    'renderer.dev': [path.join(webpackPaths.srcRendererPath, 'index.tsx')],
+    renderer: [path.join(webpackPaths.srcRendererPath, 'index.tsx')],
     proxy: path.join(webpackPaths.srcPath, 'loginRender/index.tsx'),
   },
 
@@ -125,7 +125,7 @@ const configuration: webpack.Configuration = {
       },
       isBrowser: false,
       isDevelopment: process.env.NODE_ENV !== 'production',
-      chunks: ['renderer.dev'],
+      chunks: ['renderer'],
     }),
 
     new HtmlWebpackPlugin({
@@ -142,5 +142,7 @@ const configuration: webpack.Configuration = {
     }),
   ],
 };
+
+console.log(merge(baseConfig, configuration));
 
 export default merge(baseConfig, configuration);

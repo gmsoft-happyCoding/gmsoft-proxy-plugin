@@ -20,13 +20,22 @@ app.use(
   express.static(path.join(path.resolve(), './build/static/manifest.json'))
 );
 
-app.use('/dev-login', (req, res) => {
-  res.setHeader('Content-Type', 'text/html');
-
-  fs.createReadStream(path.join(path.resolve(), 'build', 'index.html')).pipe(
-    res
+if (process.env.NODE_ENV === 'development') {
+  app.use(
+    '/dev-login',
+    createProxyMiddleware({
+      target: 'http://localhost:1212/proxy.html',
+    })
   );
-});
+} else {
+  app.use('/dev-login', (req, res) => {
+    res.setHeader('Content-Type', 'text/html');
+
+    fs.createReadStream(path.join(path.resolve(), 'build', 'index.html')).pipe(
+      res
+    );
+  });
+}
 
 app.use('/static', express.static(path.join(path.resolve(), './build/static')));
 
