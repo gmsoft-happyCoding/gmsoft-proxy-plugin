@@ -42,6 +42,14 @@ export const proxtConfig = () => {
             },
         },
         {
+            path: '/djc-gateway/authing/logout',
+            proxyConfig: {
+                target: proxyDjcGatewayDomain,
+                secure: false,
+                changeOrigin: true,
+            },
+        },
+        {
             path: '/djc-gateway/authing/login',
             proxyConfig: {
                 target: proxyDjcGatewayDomain,

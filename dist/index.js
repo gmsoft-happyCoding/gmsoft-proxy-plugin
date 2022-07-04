@@ -4016,8 +4016,8 @@ var ENV_DOMAIN = (_a = {},
         _d[PlatType.GLXT] = 'http://192.168.2.22:31880',
         _d[PlatType.ZCJ] = 'https://www.cqzcjtest1.gm',
         _d[PlatType.XCJ] = {
-            djcGatewayDomain: 'https://www.djc360.com',
-            loginDomain: 'https://www.xcj360.com',
+            djcGatewayDomain: 'https://www.djctest1.gm',
+            loginDomain: 'https://www.xcjtest1.gm',
         },
         _d),
     _a);
@@ -6872,6 +6872,14 @@ var proxtConfig = function () {
     return __spreadArray([
         {
             path: '/djc-gateway/djcsupport/domainname/getPlatformConfigure',
+            proxyConfig: {
+                target: proxyDjcGatewayDomain,
+                secure: false,
+                changeOrigin: true,
+            },
+        },
+        {
+            path: '/djc-gateway/authing/logout',
             proxyConfig: {
                 target: proxyDjcGatewayDomain,
                 secure: false,
