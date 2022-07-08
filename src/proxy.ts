@@ -12,6 +12,21 @@ import {
 const domainRegx =
     /(http(s)?:)?\/\/(?:[a-z0-9](?:[a-z0-9-_]{0,61}[a-z0-9])?(\.|:))+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]/;
 
+const onProxyReq = proxyConfig => (proxyReq, req, res) => {
+    if (proxyConfig && proxyConfig.onProxyReq && typeof proxyConfig.onProxyReq === 'function') {
+        proxyConfig.onProxyReq(proxyReq, req, res);
+    }
+
+    const headersCookie = get(req, 'headers.cookie');
+
+    if (headersCookie) {
+        proxyReq.setHeader(
+            'cookie',
+            headersCookie.replace(`_proxy_domain_${get(proxyReq, 'host')}`, 'Auth')
+        );
+    }
+};
+
 export const proxtConfig = () => {
     // 代理登录域
     const proxyDomain = process.env[REACT_APP_PROXY_LOGIN_DOMAIN];
@@ -68,10 +83,21 @@ export const proxtConfig = () => {
                 secure: false,
                 changeOrigin: true,
                 cookiePathRewrite: '/',
-                cookieDomainRewrite: `http://localhost:${port}`,
+                cookieDomainRewrite: 'localhost',
                 hostRewrite: `localhost:${port}`,
                 protocolRewrite: 'http',
-                onProxyRes: (proxyRes: any) => {
+                router: req => {
+                    const query = get(req, 'query', {});
+
+                    const { _proxy_domain_ } = query;
+
+                    if (_proxy_domain_) {
+                        return _proxy_domain_;
+                    }
+
+                    return proxyDjcGatewayDomain;
+                },
+                onProxyRes: (proxyRes: any, req) => {
                     const headerInLocation = proxyRes.headers.location;
 
                     const requestBaseUrl = domainRegx.exec(headerInLocation || '');
@@ -81,7 +107,13 @@ export const proxtConfig = () => {
                         `http://localhost:${port}`
                     );
 
-                    proxyRes.headers.location = reWriteLocation;
+                    const query = get(req, 'query', {});
+
+                    const { _proxy_domain_ } = query;
+
+                    proxyRes.headers.location = `${reWriteLocation}${
+                        _proxy_domain_ ? `&_proxy_domain_=${_proxy_domain_}` : ''
+                    }`;
                 },
             },
         },
@@ -91,6 +123,52 @@ export const proxtConfig = () => {
                 target: proxyDomain,
                 secure: false,
                 changeOrigin: true,
+                cookiePathRewrite: '/',
+                cookieDomainRewrite: 'localhost',
+                router: req => {
+                    const query = get(req, 'query', {});
+
+                    const { _proxy_domain_ } = query;
+
+                    if (_proxy_domain_) {
+                        return _proxy_domain_;
+                    }
+
+                    return proxyDomain;
+                },
+                onProxyRes: (proxyRes: any) => {
+                    const headersSetCookie = proxyRes.headers['set-cookie'];
+
+                    const cookieRegex = /([^=]*Auth)=([\s\S]+)/;
+
+                    const host = get(proxyRes, 'client.servername');
+
+                    if (Array.isArray(headersSetCookie)) {
+                        proxyRes.headers['set-cookie'] = headersSetCookie.map(cookieStr => {
+                            const cookieMatch = cookieStr.match(cookieRegex);
+
+                            if (cookieMatch) {
+                                return cookieStr.replace(
+                                    cookieMatch ? cookieMatch[1] : '',
+                                    `_proxy_domain_${host}`
+                                );
+                            }
+
+                            return cookieStr;
+                        });
+                    }
+
+                    if (typeof headersSetCookie === 'string') {
+                        const cookieMatch = headersSetCookie.match(cookieRegex);
+
+                        if (cookieMatch) {
+                            proxyRes.headers['set-cookie'] = headersSetCookie.replace(
+                                cookieMatch[1],
+                                `_proxy_domain_${host}`
+                            );
+                        }
+                    }
+                },
             },
         },
         {
@@ -99,8 +177,19 @@ export const proxtConfig = () => {
                 target: proxyDjcGatewayDomain,
                 secure: false,
                 changeOrigin: true,
+                onProxyReq: onProxyReq(proxyConfig),
             },
         },
-        ...proxyGroup,
+        ...proxyGroup.map(proxy => {
+            const { proxyConfig } = proxy;
+            return {
+                ...proxy,
+                proxyConfig: {
+                    ...(proxyConfig || {}),
+                    changeOrigin: true,
+                    onProxyReq: onProxyReq(proxyConfig),
+                },
+            };
+        }),
     ];
 };

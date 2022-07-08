@@ -4000,12 +4000,10 @@ var _a, _b, _c, _d;
 /** 环境对应域名 */
 var ENV_DOMAIN = (_a = {},
     _a[EnvType.DEV] = (_b = {},
-        _b[PlatType.GLXT] = 'http://192.168.2.21:31880',
         _b[PlatType.ZCJ] = 'https://www.cqzcjdev1.gm',
         _b[PlatType.XCJ] = 'https://www.xcjdev1.gm',
         _b),
     _a[EnvType.SHOW] = (_c = {},
-        _c[PlatType.GLXT] = 'http://192.168.2.20:31880',
         _c[PlatType.ZCJ] = 'https://www.gpwbeta.com',
         _c[PlatType.XCJ] = {
             djcGatewayDomain: 'https://www.djcshow.gm',
@@ -4013,7 +4011,6 @@ var ENV_DOMAIN = (_a = {},
         },
         _c),
     _a[EnvType.TEST1] = (_d = {},
-        _d[PlatType.GLXT] = 'http://192.168.2.22:31880',
         _d[PlatType.ZCJ] = 'https://www.cqzcjtest1.gm',
         _d[PlatType.XCJ] = {
             djcGatewayDomain: 'https://www.djctest1.gm',
@@ -6859,6 +6856,15 @@ var getNodeModulesPath = function () {
 
 // eslint-disable-next-line max-len
 var domainRegx = /(http(s)?:)?\/\/(?:[a-z0-9](?:[a-z0-9-_]{0,61}[a-z0-9])?(\.|:))+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]/;
+var onProxyReq = function (proxyConfig) { return function (proxyReq, req, res) {
+    if (proxyConfig && proxyConfig.onProxyReq && typeof proxyConfig.onProxyReq === 'function') {
+        proxyConfig.onProxyReq(proxyReq, req, res);
+    }
+    var headersCookie = get_1(req, 'headers.cookie');
+    if (headersCookie) {
+        proxyReq.setHeader('cookie', headersCookie.replace("_proxy_domain_" + get_1(proxyReq, 'host'), 'Auth'));
+    }
+}; };
 var proxtConfig = function () {
     // 代理登录域
     var proxyDomain = process.env[REACT_APP_PROXY_LOGIN_DOMAIN];
@@ -6905,14 +6911,24 @@ var proxtConfig = function () {
                 secure: false,
                 changeOrigin: true,
                 cookiePathRewrite: '/',
-                cookieDomainRewrite: "http://localhost:" + port,
+                cookieDomainRewrite: 'localhost',
                 hostRewrite: "localhost:" + port,
                 protocolRewrite: 'http',
-                onProxyRes: function (proxyRes) {
+                router: function (req) {
+                    var query = get_1(req, 'query', {});
+                    var _proxy_domain_ = query._proxy_domain_;
+                    if (_proxy_domain_) {
+                        return _proxy_domain_;
+                    }
+                    return proxyDjcGatewayDomain;
+                },
+                onProxyRes: function (proxyRes, req) {
                     var headerInLocation = proxyRes.headers.location;
                     var requestBaseUrl = domainRegx.exec(headerInLocation || '');
                     var reWriteLocation = headerInLocation.replace(requestBaseUrl ? new RegExp(requestBaseUrl[0]) : '', "http://localhost:" + port);
-                    proxyRes.headers.location = reWriteLocation;
+                    var query = get_1(req, 'query', {});
+                    var _proxy_domain_ = query._proxy_domain_;
+                    proxyRes.headers.location = "" + reWriteLocation + (_proxy_domain_ ? "&_proxy_domain_=" + _proxy_domain_ : '');
                 },
             },
         },
@@ -6922,6 +6938,36 @@ var proxtConfig = function () {
                 target: proxyDomain,
                 secure: false,
                 changeOrigin: true,
+                cookiePathRewrite: '/',
+                cookieDomainRewrite: 'localhost',
+                router: function (req) {
+                    var query = get_1(req, 'query', {});
+                    var _proxy_domain_ = query._proxy_domain_;
+                    if (_proxy_domain_) {
+                        return _proxy_domain_;
+                    }
+                    return proxyDomain;
+                },
+                onProxyRes: function (proxyRes) {
+                    var headersSetCookie = proxyRes.headers['set-cookie'];
+                    var cookieRegex = /([^=]*Auth)=([\s\S]+)/;
+                    var host = get_1(proxyRes, 'client.servername');
+                    if (Array.isArray(headersSetCookie)) {
+                        proxyRes.headers['set-cookie'] = headersSetCookie.map(function (cookieStr) {
+                            var cookieMatch = cookieStr.match(cookieRegex);
+                            if (cookieMatch) {
+                                return cookieStr.replace(cookieMatch ? cookieMatch[1] : '', "_proxy_domain_" + host);
+                            }
+                            return cookieStr;
+                        });
+                    }
+                    if (typeof headersSetCookie === 'string') {
+                        var cookieMatch = headersSetCookie.match(cookieRegex);
+                        if (cookieMatch) {
+                            proxyRes.headers['set-cookie'] = headersSetCookie.replace(cookieMatch[1], "_proxy_domain_" + host);
+                        }
+                    }
+                },
             },
         },
         {
@@ -6930,9 +6976,13 @@ var proxtConfig = function () {
                 target: proxyDjcGatewayDomain,
                 secure: false,
                 changeOrigin: true,
+                onProxyReq: onProxyReq(proxyConfig),
             },
         }
-    ], proxyGroup);
+    ], proxyGroup.map(function (proxy) {
+        var proxyConfig = proxy.proxyConfig;
+        return __assign(__assign({}, proxy), { proxyConfig: __assign(__assign({}, (proxyConfig || {})), { changeOrigin: true, onProxyReq: onProxyReq(proxyConfig) }) });
+    }));
 };
 
 var setupProxy = function (app) {
