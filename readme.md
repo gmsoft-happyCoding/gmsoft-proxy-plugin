@@ -19,13 +19,9 @@ Note:切换成私服 npm 源
 ```javascript
 /**
  * @chooseProxyOptions 方法只针对 当前最新版本登录方案
- * @chooseLoginTypeProxyOptions  可选择登录方案(新的 或者 旧的)  即将废弃
  * @customProxyOptions  自定义 环境配置 以及 环境对应域  @params 可选
  * */
 
-/**
- * @params {envDomain:Object,loginType:boolean}
- */
 
 /**
  * @envDomain
@@ -45,9 +41,6 @@ enum EnvType {
 
 /** 已平台枚举为key的配置 */
 enum PlatType {
-    /** GLXT */
-    GLXT = 'GLXT',
-
     /** ZCJ */
     ZCJ = 'ZCJ',
 
@@ -62,12 +55,10 @@ enum PlatType {
  */
 const ENV_DOMAIN = {
     [EnvType.DEV]: {
-        [PlatType.GLXT]: 'http://192.168.2.21:31880',
         [PlatType.ZCJ]: 'https://www.cqzcjdev1.gm',
         [PlatType.XCJ]: 'https://www.xcjdev1.gm',
     },
     [EnvType.SHOW]: {
-        [PlatType.GLXT]: 'http://192.168.2.20:31880',
         [PlatType.ZCJ]: 'https://www.gpwbeta.com',
         [PlatType.XCJ]: {
             djcGatewayDomain: 'https://www.djcshow.gm',
@@ -75,7 +66,6 @@ const ENV_DOMAIN = {
         },
     },
     [EnvType.TEST1]: {
-        [PlatType.GLXT]: 'http://192.168.2.22:31880',
         [PlatType.ZCJ]: 'https://www.cqzcjtest1.gm',
         [PlatType.XCJ]: {
             djcGatewayDomain: 'https://www.djc360.com',
@@ -85,14 +75,10 @@ const ENV_DOMAIN = {
 };
 
 
-/**
- * @loginType boolean;// 是否可选择登录方案   默认：false
- * */
 
 
 const {
     chooseProxyOptions,
-    chooseLoginTypeProxyOptions,
     customProxyOptions,
 } = require('@gmsoft/proxy-plugin');
 
@@ -107,10 +93,7 @@ module.exports = {
     /** 方案1 */
     plugins: [chooseProxyOptions], // 无自定义环境代理 新登录方案
 
-    /** 方案2  即将废弃 */
-    plugins: [chooseLoginTypeProxyOptions], // 无自定义环境代理 可选登录方案
-
-    /** 方案3 */
+    /** 方案2 */
     // 无自定义环境代理 登录方案
     plugins: [customProxyOptions({envDomain: {show: {
           cqsgaj: {
@@ -119,7 +102,7 @@ module.exports = {
             platformCode: 'cqsgaj.cqzcjshow.com',  // 私有域 配置的 平台 code 用于 登录请求
           },
          }
-        },loginType:true })],
+        } })],
 
     /** 重要语句 结束 */
 };

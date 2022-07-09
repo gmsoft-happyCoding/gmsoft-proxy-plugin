@@ -13,15 +13,14 @@ import {
 import { buildaPrams } from './utils';
 import { proxtConfig } from './proxy';
 import { setupProxy } from './setupProxy';
-import { LoginType } from './enums/LoginType.enum';
 import { EnvType } from './enums/EnvType.enum';
 import { PlatType } from './enums/PlatType.enum';
 import type { ProxyConfig } from './type';
 
 const proxyOptions: (proxyConfig?: ProxyConfig) => (context: any) => Promise<any> =
-    (proxyConfig = { envDomain: {}, loginType: false }) =>
+    (proxyConfig = { envDomain: {} }) =>
     async (context: any) => {
-        const { envDomain, loginType } = proxyConfig;
+        const { envDomain } = proxyConfig;
 
         const { inquirer, produce, pluginOption } = context;
 
@@ -30,20 +29,6 @@ const proxyOptions: (proxyConfig?: ProxyConfig) => (context: any) => Promise<any
         const mergeEnvDomain = merge(ENV_DOMAIN, envDomain);
 
         const questions = [
-            ...(loginType
-                ? [
-                      {
-                          type: 'list',
-                          name: 'loginType',
-                          message: '请选择登录模式:',
-                          choices: [
-                              { name: '新的(当前test1环境登录)', value: LoginType.NEW },
-                              { name: '旧的(当前show环境登录)', value: LoginType.OLD },
-                          ],
-                          default: LoginType.NEW,
-                      },
-                  ]
-                : []),
             {
                 type: 'list',
                 name: 'proxyEnv',
@@ -59,7 +44,7 @@ const proxyOptions: (proxyConfig?: ProxyConfig) => (context: any) => Promise<any
                     const proxyEnv = answers.proxyEnv;
                     return map(mergeEnvDomain[proxyEnv], (_, key) => ({ name: key, value: key }));
                 },
-                default: PlatType.GLXT,
+                default: PlatType.ZCJ,
             },
         ];
 
@@ -88,7 +73,6 @@ const proxyOptions: (proxyConfig?: ProxyConfig) => (context: any) => Promise<any
                         answers.proxyEnv,
                         answers.proxyPlat,
                         mergeEnvDomain,
-                        answers.loginType,
                         platformCode as string
                     ),
                     /** 大家采网关域名 */
@@ -107,18 +91,10 @@ const proxyOptions: (proxyConfig?: ProxyConfig) => (context: any) => Promise<any
         return context;
     };
 
-const chooseLoginTypeProxyOptions = proxyOptions({ loginType: true });
-
 const chooseProxyOptions = proxyOptions();
 
 const customProxyOptions = proxyOptions;
 
 export default proxyOptions;
 
-export {
-    proxtConfig,
-    customProxyOptions,
-    chooseProxyOptions,
-    chooseLoginTypeProxyOptions,
-    setupProxy,
-};
+export { proxtConfig, customProxyOptions, chooseProxyOptions, setupProxy };

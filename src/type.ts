@@ -14,5 +14,4 @@ export interface EnvDomain {
 
 export interface ProxyConfig {
     envDomain?: EnvDomain;
-    loginType?: boolean;
 }
