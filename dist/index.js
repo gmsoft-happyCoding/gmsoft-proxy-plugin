@@ -3988,8 +3988,6 @@ var EnvType;
 
 var PlatType;
 (function (PlatType) {
-    /** GLXT */
-    PlatType["GLXT"] = "GLXT";
     /** ZCJ */
     PlatType["ZCJ"] = "ZCJ";
     /** XCJ */
@@ -6783,19 +6781,9 @@ var lib = {
   ...remove_1
 };
 
-var LoginType;
-(function (LoginType) {
-    /** 新的 */
-    LoginType["NEW"] = "new";
-    /** 旧的 */
-    LoginType["OLD"] = "old";
-})(LoginType || (LoginType = {}));
-
 // 根据平台信息 构建 client_id
 var buildClientId = function (platType, platformCode) {
     switch (platType) {
-        case PlatType.GLXT:
-            return 'ZCJ@PM';
         case PlatType.ZCJ:
             return 'plat@ZCJ';
         case PlatType.XCJ:
@@ -6812,20 +6800,8 @@ var uriTransformDomain = function (uri) {
     }
     return uri;
 };
-// 老登录方式的 scope 转换
-var platScopeBuild = function (platType, uri) {
-    switch (platType) {
-        case PlatType.ZCJ:
-        case PlatType.GLXT:
-            return PlatType.ZCJ;
-        case PlatType.XCJ:
-            return PlatType.XCJ;
-        default:
-            return uriTransformDomain(uri);
-    }
-};
 // 根据 环境 和 平台信息 构建  redirect_uri 和 scope
-var buildaPrams = function (envType, platType, envDomain, loginType, platformCode) {
+var buildaPrams = function (envType, platType, envDomain, platformCode) {
     if (envDomain === void 0) { envDomain = {}; }
     // 获取对应环境 以及 对应平台 的配置
     var domainConfig = get_1(envDomain, envType + "." + platType);
@@ -6840,7 +6816,7 @@ var buildaPrams = function (envType, platType, envDomain, loginType, platformCod
     }
     var common = {
         client_id: clientId,
-        scope: loginType === LoginType.OLD ? platScopeBuild(platType, uri) : uriTransformDomain(uri),
+        scope: uriTransformDomain(uri),
         redirect_uri: uri + "/gateway/v1/login",
     };
     return __assign(__assign({}, common), { state: JSON.stringify(common) });
@@ -6995,30 +6971,17 @@ var setupProxy = function (app) {
 };
 
 var proxyOptions = function (proxyConfig) {
-    if (proxyConfig === void 0) { proxyConfig = { envDomain: {}, loginType: false }; }
+    if (proxyConfig === void 0) { proxyConfig = { envDomain: {} }; }
     return function (context) { return __awaiter(void 0, void 0, void 0, function () {
-        var envDomain, loginType, inquirer, produce, pluginOption, isDev, mergeEnvDomain, questions, answers_1;
+        var envDomain, inquirer, produce, pluginOption, isDev, mergeEnvDomain, questions, answers_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    envDomain = proxyConfig.envDomain, loginType = proxyConfig.loginType;
+                    envDomain = proxyConfig.envDomain;
                     inquirer = context.inquirer, produce = context.produce, pluginOption = context.pluginOption;
                     isDev = process.env.NODE_ENV !== 'production';
                     mergeEnvDomain = merge_1(ENV_DOMAIN, envDomain);
-                    questions = __spreadArray(__spreadArray([], (loginType
-                        ? [
-                            {
-                                type: 'list',
-                                name: 'loginType',
-                                message: '请选择登录模式:',
-                                choices: [
-                                    { name: '新的(当前test1环境登录)', value: LoginType.NEW },
-                                    { name: '旧的(当前show环境登录)', value: LoginType.OLD },
-                                ],
-                                default: LoginType.NEW,
-                            },
-                        ]
-                        : [])), [
+                    questions = [
                         {
                             type: 'list',
                             name: 'proxyEnv',
@@ -7034,9 +6997,9 @@ var proxyOptions = function (proxyConfig) {
                                 var proxyEnv = answers.proxyEnv;
                                 return map_1(mergeEnvDomain[proxyEnv], function (_, key) { return ({ name: key, value: key }); });
                             },
-                            default: PlatType.GLXT,
+                            default: PlatType.ZCJ,
                         },
-                    ]);
+                    ];
                     if (!isDev) return [3 /*break*/, 2];
                     return [4 /*yield*/, inquirer
                             .prompt(questions)
@@ -7049,18 +7012,16 @@ var proxyOptions = function (proxyConfig) {
                             var domainConfig = get_1(mergeEnvDomain, answers_1.proxyEnv + "." + answers_1.proxyPlat);
                             // 获取代理平台的平台编码
                             var platformCode = get_1(domainConfig, 'platformCode');
-                            draft.config.envs = __assign(__assign({}, draft.config.envs), (_a = {}, _a[REACT_APP_PROXY_ENV] = answers_1.proxyEnv, _a[REACT_APP_PROXY_PLAT] = answers_1.proxyPlat, _a[REACT_APP_PROXY_PARAMS] = buildaPrams(answers_1.proxyEnv, answers_1.proxyPlat, mergeEnvDomain, answers_1.loginType, platformCode), _a[REACT_APP_PROXY_DJC_GATEWAY_DOMAIN] = get_1(domainConfig, 'djcGatewayDomain') || domainConfig, _a[REACT_APP_PROXY_LOGIN_DOMAIN] = get_1(domainConfig, 'loginDomain') || domainConfig, _a[REACT_APP_PROXY_LOGIN_DOMAIN_NOT_PROTOCOL] = (get_1(domainConfig, 'loginDomain') || domainConfig).replace(/^(http:|https:)(\/)*/, ''), _a));
+                            draft.config.envs = __assign(__assign({}, draft.config.envs), (_a = {}, _a[REACT_APP_PROXY_ENV] = answers_1.proxyEnv, _a[REACT_APP_PROXY_PLAT] = answers_1.proxyPlat, _a[REACT_APP_PROXY_PARAMS] = buildaPrams(answers_1.proxyEnv, answers_1.proxyPlat, mergeEnvDomain, platformCode), _a[REACT_APP_PROXY_DJC_GATEWAY_DOMAIN] = get_1(domainConfig, 'djcGatewayDomain') || domainConfig, _a[REACT_APP_PROXY_LOGIN_DOMAIN] = get_1(domainConfig, 'loginDomain') || domainConfig, _a[REACT_APP_PROXY_LOGIN_DOMAIN_NOT_PROTOCOL] = (get_1(domainConfig, 'loginDomain') || domainConfig).replace(/^(http:|https:)(\/)*/, ''), _a));
                         })];
                 case 2: return [2 /*return*/, context];
             }
         });
     }); };
 };
-var chooseLoginTypeProxyOptions = proxyOptions({ loginType: true });
 var chooseProxyOptions = proxyOptions();
 var customProxyOptions = proxyOptions;
 
-exports.chooseLoginTypeProxyOptions = chooseLoginTypeProxyOptions;
 exports.chooseProxyOptions = chooseProxyOptions;
 exports.customProxyOptions = customProxyOptions;
 exports.default = proxyOptions;
