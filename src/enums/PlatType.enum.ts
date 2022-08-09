@@ -4,4 +4,7 @@ export enum PlatType {
 
     /** XCJ */
     XCJ = 'XCJ',
+
+    /** DJC */
+    DJC = 'DJC',
 }

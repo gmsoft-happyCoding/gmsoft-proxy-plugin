@@ -7,7 +7,6 @@ import {
     REACT_APP_PROXY_PLAT,
     REACT_APP_PROXY_ENV,
     REACT_APP_PROXY_LOGIN_DOMAIN,
-    REACT_APP_PROXY_DJC_GATEWAY_DOMAIN,
     REACT_APP_PROXY_LOGIN_DOMAIN_NOT_PROTOCOL,
 } from './constant';
 import { buildaPrams } from './utils';
@@ -53,11 +52,10 @@ const proxyOptions: (proxyConfig?: ProxyConfig) => (context: any) => Promise<any
                 .prompt(questions)
                 .then(_answers => ({ ...pluginOption, ..._answers }));
             return produce(context, draft => {
+                const { proxyEnv, proxyPlat } = answers;
+
                 // 获取 代理登录
-                const domainConfig = get(
-                    mergeEnvDomain,
-                    `${answers.proxyEnv}.${answers.proxyPlat}`
-                );
+                const domainConfig = get(mergeEnvDomain, `${proxyEnv}.${proxyPlat}`);
 
                 // 获取代理平台的平台编码
                 const platformCode = get(domainConfig, 'platformCode');
@@ -65,19 +63,16 @@ const proxyOptions: (proxyConfig?: ProxyConfig) => (context: any) => Promise<any
                 draft.config.envs = {
                     ...draft.config.envs,
                     /** 代理环境 */
-                    [REACT_APP_PROXY_ENV]: answers.proxyEnv,
+                    [REACT_APP_PROXY_ENV]: proxyEnv,
                     /** 代理平台 */
-                    [REACT_APP_PROXY_PLAT]: answers.proxyPlat,
+                    [REACT_APP_PROXY_PLAT]: proxyPlat,
                     /** 代理请求所需参数 */
                     [REACT_APP_PROXY_PARAMS]: buildaPrams(
-                        answers.proxyEnv,
-                        answers.proxyPlat,
+                        proxyEnv,
+                        proxyPlat,
                         mergeEnvDomain,
                         platformCode as string
                     ),
-                    /** 大家采网关域名 */
-                    [REACT_APP_PROXY_DJC_GATEWAY_DOMAIN]:
-                        get(domainConfig, 'djcGatewayDomain') || domainConfig,
                     /** 代理登录域名  带协议 */
                     [REACT_APP_PROXY_LOGIN_DOMAIN]:
                         get(domainConfig, 'loginDomain') || domainConfig,

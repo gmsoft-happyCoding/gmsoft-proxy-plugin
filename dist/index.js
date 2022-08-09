@@ -3992,27 +3992,41 @@ var PlatType;
     PlatType["ZCJ"] = "ZCJ";
     /** XCJ */
     PlatType["XCJ"] = "XCJ";
+    /** DJC */
+    PlatType["DJC"] = "DJC";
 })(PlatType || (PlatType = {}));
 
 var _a, _b, _c, _d;
 /** 环境对应域名 */
 var ENV_DOMAIN = (_a = {},
     _a[EnvType.DEV] = (_b = {},
-        _b[PlatType.ZCJ] = 'https://www.cqzcjdev1.gm',
-        _b[PlatType.XCJ] = 'https://www.xcjdev1.gm',
+        _b[PlatType.ZCJ] = {
+            loginDomain: 'https://www.cqzcjdev1.gm',
+            platformCode: 'ZCJ',
+        },
+        _b[PlatType.XCJ] = {
+            loginDomain: 'https://www.xcjdev1.gm',
+            platformCode: 'XCJ',
+        },
         _b),
     _a[EnvType.SHOW] = (_c = {},
-        _c[PlatType.ZCJ] = 'https://www.gpwbeta.com',
+        _c[PlatType.ZCJ] = {
+            loginDomain: 'https://www.gpwbeta.com',
+            platformCode: 'ZCJ',
+        },
         _c[PlatType.XCJ] = {
-            djcGatewayDomain: 'https://www.djcshow.gm',
-            loginDomain: 'https://www.cqzcjshow.com',
+            loginDomain: 'https://cqzcjshow.com',
+            platformCode: 'XCJ',
         },
         _c),
     _a[EnvType.TEST1] = (_d = {},
-        _d[PlatType.ZCJ] = 'https://www.cqzcjtest1.gm',
+        _d[PlatType.ZCJ] = {
+            loginDomain: 'https://www.cqzcjtest1.gm',
+            platformCode: 'ZCJ',
+        },
         _d[PlatType.XCJ] = {
-            djcGatewayDomain: 'https://www.djctest1.gm',
             loginDomain: 'https://www.xcjtest1.gm',
+            platformCode: 'XCJ',
         },
         _d),
     _a);
@@ -4022,8 +4036,6 @@ var REACT_APP_PROXY_PARAMS = 'REACT_APP_PROXY_PARAMS';
 var REACT_APP_PROXY_PLAT = 'REACT_APP_PROXY_PLAT';
 // 代理环境
 var REACT_APP_PROXY_ENV = 'REACT_APP_PROXY_ENV';
-// 代理大家采域名
-var REACT_APP_PROXY_DJC_GATEWAY_DOMAIN = 'REACT_APP_PROXY_DJC_GATEWAY_DOMAIN';
 // 登录所在域
 var REACT_APP_PROXY_LOGIN_DOMAIN = 'REACT_APP_PROXY_LOGIN_DOMAIN';
 // 登录 所在域 不带协议
@@ -6819,7 +6831,17 @@ var buildaPrams = function (envType, platType, envDomain, platformCode) {
         scope: uriTransformDomain(uri),
         redirect_uri: uri + "/gateway/v1/login",
     };
-    return __assign(__assign({}, common), { state: JSON.stringify(common) });
+    var registry = get_1(domainConfig, 'registry', []);
+    return __assign(__assign({}, common), { state: JSON.stringify(common), registry: registry.map(function (item) {
+            var registryLoginDomain = get_1(item, 'loginDomain', '');
+            var registryLoginUri = uriTransformDomain(registryLoginDomain);
+            var buildCommon = {
+                client_id: buildClientId(undefined, get_1(item, 'platformCode')),
+                scope: registryLoginUri,
+                redirect_uri: registryLoginDomain + "/gateway/v1/login",
+            };
+            return __assign(__assign({}, buildCommon), { loginDomain: registryLoginDomain, state: JSON.stringify(buildCommon) });
+        }) });
 };
 var getNodeModulesPath = function () {
     var nodeWorkPath = process.cwd();
@@ -6844,8 +6866,6 @@ var onProxyReq = function (proxyConfig) { return function (proxyReq, req, res) {
 var proxtConfig = function () {
     // 代理登录域
     var proxyDomain = process.env[REACT_APP_PROXY_LOGIN_DOMAIN];
-    // 代理大家采网关域
-    var proxyDjcGatewayDomain = process.env[REACT_APP_PROXY_DJC_GATEWAY_DOMAIN];
     var port = process.env.PORT;
     var proxyPath = path__default['default'].resolve(process.cwd(), './project-config/common/proxy.js');
     // 代理配置
@@ -6855,7 +6875,7 @@ var proxtConfig = function () {
         {
             path: '/djc-gateway/djcsupport/domainname/getPlatformConfigure',
             proxyConfig: {
-                target: proxyDjcGatewayDomain,
+                target: proxyDomain,
                 secure: false,
                 changeOrigin: true,
             },
@@ -6863,15 +6883,31 @@ var proxtConfig = function () {
         {
             path: '/djc-gateway/authing/logout',
             proxyConfig: {
-                target: proxyDjcGatewayDomain,
+                target: proxyDomain,
                 secure: false,
                 changeOrigin: true,
             },
         },
         {
+            path: '/djc-gateway/authing/v1/sync-login',
+            proxyConfig: {
+                target: proxyDomain,
+                secure: false,
+                changeOrigin: true,
+                router: function (req) {
+                    var query = get_1(req, 'query', {});
+                    var _proxy_domain_ = query._proxy_domain_;
+                    if (_proxy_domain_) {
+                        return _proxy_domain_;
+                    }
+                    return proxyDomain;
+                },
+            },
+        },
+        {
             path: '/djc-gateway/authing/login',
             proxyConfig: {
-                target: proxyDjcGatewayDomain,
+                target: proxyDomain,
                 secure: false,
                 changeOrigin: true,
                 cookiePathRewrite: '/',
@@ -6883,7 +6919,7 @@ var proxtConfig = function () {
         {
             path: '/djc-gateway/authing/oauth/authorize',
             proxyConfig: {
-                target: proxyDjcGatewayDomain,
+                target: proxyDomain,
                 secure: false,
                 changeOrigin: true,
                 cookiePathRewrite: '/',
@@ -6896,7 +6932,7 @@ var proxtConfig = function () {
                     if (_proxy_domain_) {
                         return _proxy_domain_;
                     }
-                    return proxyDjcGatewayDomain;
+                    return proxyDomain;
                 },
                 onProxyRes: function (proxyRes, req) {
                     var headerInLocation = proxyRes.headers.location;
@@ -6949,7 +6985,7 @@ var proxtConfig = function () {
         {
             path: '/gateway/v1/user',
             proxyConfig: {
-                target: proxyDjcGatewayDomain,
+                target: proxyDomain,
                 secure: false,
                 changeOrigin: true,
                 onProxyReq: onProxyReq(proxyConfig),
@@ -7008,11 +7044,12 @@ var proxyOptions = function (proxyConfig) {
                     answers_1 = _a.sent();
                     return [2 /*return*/, produce(context, function (draft) {
                             var _a;
+                            var proxyEnv = answers_1.proxyEnv, proxyPlat = answers_1.proxyPlat;
                             // 获取 代理登录
-                            var domainConfig = get_1(mergeEnvDomain, answers_1.proxyEnv + "." + answers_1.proxyPlat);
+                            var domainConfig = get_1(mergeEnvDomain, proxyEnv + "." + proxyPlat);
                             // 获取代理平台的平台编码
                             var platformCode = get_1(domainConfig, 'platformCode');
-                            draft.config.envs = __assign(__assign({}, draft.config.envs), (_a = {}, _a[REACT_APP_PROXY_ENV] = answers_1.proxyEnv, _a[REACT_APP_PROXY_PLAT] = answers_1.proxyPlat, _a[REACT_APP_PROXY_PARAMS] = buildaPrams(answers_1.proxyEnv, answers_1.proxyPlat, mergeEnvDomain, platformCode), _a[REACT_APP_PROXY_DJC_GATEWAY_DOMAIN] = get_1(domainConfig, 'djcGatewayDomain') || domainConfig, _a[REACT_APP_PROXY_LOGIN_DOMAIN] = get_1(domainConfig, 'loginDomain') || domainConfig, _a[REACT_APP_PROXY_LOGIN_DOMAIN_NOT_PROTOCOL] = (get_1(domainConfig, 'loginDomain') || domainConfig).replace(/^(http:|https:)(\/)*/, ''), _a));
+                            draft.config.envs = __assign(__assign({}, draft.config.envs), (_a = {}, _a[REACT_APP_PROXY_ENV] = proxyEnv, _a[REACT_APP_PROXY_PLAT] = proxyPlat, _a[REACT_APP_PROXY_PARAMS] = buildaPrams(proxyEnv, proxyPlat, mergeEnvDomain, platformCode), _a[REACT_APP_PROXY_LOGIN_DOMAIN] = get_1(domainConfig, 'loginDomain') || domainConfig, _a[REACT_APP_PROXY_LOGIN_DOMAIN_NOT_PROTOCOL] = (get_1(domainConfig, 'loginDomain') || domainConfig).replace(/^(http:|https:)(\/)*/, ''), _a));
                         })];
                 case 2: return [2 /*return*/, context];
             }

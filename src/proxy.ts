@@ -5,7 +5,6 @@ import {
     REACT_APP_PROXY_ENV,
     REACT_APP_PROXY_PLAT,
     REACT_APP_PROXY_LOGIN_DOMAIN,
-    REACT_APP_PROXY_DJC_GATEWAY_DOMAIN,
 } from './constant';
 
 // eslint-disable-next-line max-len
@@ -31,9 +30,6 @@ export const proxtConfig = () => {
     // 代理登录域
     const proxyDomain = process.env[REACT_APP_PROXY_LOGIN_DOMAIN];
 
-    // 代理大家采网关域
-    const proxyDjcGatewayDomain = process.env[REACT_APP_PROXY_DJC_GATEWAY_DOMAIN];
-
     const port = process.env.PORT;
 
     const proxyPath = path.resolve(process.cwd(), './project-config/common/proxy.js');
@@ -51,7 +47,7 @@ export const proxtConfig = () => {
         {
             path: '/djc-gateway/djcsupport/domainname/getPlatformConfigure',
             proxyConfig: {
-                target: proxyDjcGatewayDomain,
+                target: proxyDomain,
                 secure: false,
                 changeOrigin: true,
             },
@@ -59,15 +55,34 @@ export const proxtConfig = () => {
         {
             path: '/djc-gateway/authing/logout',
             proxyConfig: {
-                target: proxyDjcGatewayDomain,
+                target: proxyDomain,
                 secure: false,
                 changeOrigin: true,
             },
         },
         {
+            path: '/djc-gateway/authing/v1/sync-login',
+            proxyConfig: {
+                target: proxyDomain,
+                secure: false,
+                changeOrigin: true,
+                router: req => {
+                    const query = get(req, 'query', {});
+
+                    const { _proxy_domain_ } = query;
+
+                    if (_proxy_domain_) {
+                        return _proxy_domain_;
+                    }
+
+                    return proxyDomain;
+                },
+            },
+        },
+        {
             path: '/djc-gateway/authing/login',
             proxyConfig: {
-                target: proxyDjcGatewayDomain,
+                target: proxyDomain,
                 secure: false,
                 changeOrigin: true,
                 cookiePathRewrite: '/',
@@ -79,7 +94,7 @@ export const proxtConfig = () => {
         {
             path: '/djc-gateway/authing/oauth/authorize',
             proxyConfig: {
-                target: proxyDjcGatewayDomain,
+                target: proxyDomain,
                 secure: false,
                 changeOrigin: true,
                 cookiePathRewrite: '/',
@@ -95,7 +110,7 @@ export const proxtConfig = () => {
                         return _proxy_domain_;
                     }
 
-                    return proxyDjcGatewayDomain;
+                    return proxyDomain;
                 },
                 onProxyRes: (proxyRes: any, req) => {
                     const headerInLocation = proxyRes.headers.location;
@@ -174,7 +189,7 @@ export const proxtConfig = () => {
         {
             path: '/gateway/v1/user',
             proxyConfig: {
-                target: proxyDjcGatewayDomain,
+                target: proxyDomain,
                 secure: false,
                 changeOrigin: true,
                 onProxyReq: onProxyReq(proxyConfig),

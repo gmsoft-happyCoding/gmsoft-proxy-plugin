@@ -3,9 +3,10 @@ import path from 'path';
 import fs from 'fs-extra';
 import { EnvType } from './enums/EnvType.enum';
 import { PlatType } from './enums/PlatType.enum';
+import type { Registry } from './type';
 
 // 根据平台信息 构建 client_id
-export const buildClientId = (platType: PlatType, platformCode?: string): string => {
+export const buildClientId = (platType?: PlatType, platformCode?: string): string => {
     switch (platType) {
         case PlatType.ZCJ:
             return 'plat@ZCJ';
@@ -38,6 +39,7 @@ export const buildaPrams = (
     scope?: string;
     redirect_uri?: string;
     state?: string;
+    registry?: any[];
 } => {
     // 获取对应环境 以及 对应平台 的配置
     const domainConfig = get(envDomain, `${envType}.${platType}`);
@@ -60,9 +62,28 @@ export const buildaPrams = (
         redirect_uri: `${uri}/gateway/v1/login`,
     };
 
+    const registry: Registry[] = get(domainConfig, 'registry', []);
+
     return {
         ...common,
         state: JSON.stringify(common),
+        registry: registry.map(item => {
+            const registryLoginDomain = get(item, 'loginDomain', '');
+
+            const registryLoginUri = uriTransformDomain(registryLoginDomain);
+
+            const buildCommon = {
+                client_id: buildClientId(undefined, get(item, 'platformCode')),
+                scope: registryLoginUri,
+                redirect_uri: `${registryLoginDomain}/gateway/v1/login`,
+            };
+
+            return {
+                ...buildCommon,
+                loginDomain: registryLoginDomain,
+                state: JSON.stringify(buildCommon),
+            };
+        }),
     };
 };
 
