@@ -9,6 +9,7 @@ export const ENV_DOMAIN = {
             platformCode: 'ZCJ',
         },
         [PlatType.XCJ]: {
+            djcGatewayDomain: 'https://www.djcdev1.gm',
             loginDomain: 'https://www.xcjdev1.gm',
             platformCode: 'XCJ',
         },
@@ -19,7 +20,8 @@ export const ENV_DOMAIN = {
             platformCode: 'ZCJ',
         },
         [PlatType.XCJ]: {
-            loginDomain: 'https://cqzcjshow.com',
+            djcGatewayDomain: 'https://www.djcshow.gm',
+            loginDomain: 'https://www.cqzcjshow.com',
             platformCode: 'XCJ',
         },
     },
@@ -29,6 +31,7 @@ export const ENV_DOMAIN = {
             platformCode: 'ZCJ',
         },
         [PlatType.XCJ]: {
+            djcGatewayDomain: 'https://www.djctest1.gm',
             loginDomain: 'https://www.xcjtest1.gm',
             platformCode: 'XCJ',
         },
@@ -43,6 +46,9 @@ export const REACT_APP_PROXY_PLAT = 'REACT_APP_PROXY_PLAT';
 
 // 代理环境
 export const REACT_APP_PROXY_ENV = 'REACT_APP_PROXY_ENV';
+
+// 代理大家采域名
+export const REACT_APP_PROXY_DJC_GATEWAY_DOMAIN = 'REACT_APP_PROXY_DJC_GATEWAY_DOMAIN';
 
 // 登录所在域
 export const REACT_APP_PROXY_LOGIN_DOMAIN = 'REACT_APP_PROXY_LOGIN_DOMAIN';

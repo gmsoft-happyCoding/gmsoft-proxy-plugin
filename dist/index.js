@@ -4005,6 +4005,7 @@ var ENV_DOMAIN = (_a = {},
             platformCode: 'ZCJ',
         },
         _b[PlatType.XCJ] = {
+            djcGatewayDomain: 'https://www.djcdev1.gm',
             loginDomain: 'https://www.xcjdev1.gm',
             platformCode: 'XCJ',
         },
@@ -4015,7 +4016,8 @@ var ENV_DOMAIN = (_a = {},
             platformCode: 'ZCJ',
         },
         _c[PlatType.XCJ] = {
-            loginDomain: 'https://cqzcjshow.com',
+            djcGatewayDomain: 'https://www.djcshow.gm',
+            loginDomain: 'https://www.cqzcjshow.com',
             platformCode: 'XCJ',
         },
         _c),
@@ -4025,6 +4027,7 @@ var ENV_DOMAIN = (_a = {},
             platformCode: 'ZCJ',
         },
         _d[PlatType.XCJ] = {
+            djcGatewayDomain: 'https://www.djctest1.gm',
             loginDomain: 'https://www.xcjtest1.gm',
             platformCode: 'XCJ',
         },
@@ -4036,6 +4039,8 @@ var REACT_APP_PROXY_PARAMS = 'REACT_APP_PROXY_PARAMS';
 var REACT_APP_PROXY_PLAT = 'REACT_APP_PROXY_PLAT';
 // 代理环境
 var REACT_APP_PROXY_ENV = 'REACT_APP_PROXY_ENV';
+// 代理大家采域名
+var REACT_APP_PROXY_DJC_GATEWAY_DOMAIN = 'REACT_APP_PROXY_DJC_GATEWAY_DOMAIN';
 // 登录所在域
 var REACT_APP_PROXY_LOGIN_DOMAIN = 'REACT_APP_PROXY_LOGIN_DOMAIN';
 // 登录 所在域 不带协议
@@ -6866,6 +6871,8 @@ var onProxyReq = function (proxyConfig) { return function (proxyReq, req, res) {
 var proxtConfig = function () {
     // 代理登录域
     var proxyDomain = process.env[REACT_APP_PROXY_LOGIN_DOMAIN];
+    // 代理大家采网关域
+    var proxyDjcGatewayDomain = process.env[REACT_APP_PROXY_DJC_GATEWAY_DOMAIN];
     var port = process.env.PORT;
     var proxyPath = path__default['default'].resolve(process.cwd(), './project-config/common/proxy.js');
     // 代理配置
@@ -6875,7 +6882,7 @@ var proxtConfig = function () {
         {
             path: '/djc-gateway/djcsupport/domainname/getPlatformConfigure',
             proxyConfig: {
-                target: proxyDomain,
+                target: proxyDjcGatewayDomain,
                 secure: false,
                 changeOrigin: true,
             },
@@ -6889,25 +6896,9 @@ var proxtConfig = function () {
             },
         },
         {
-            path: '/djc-gateway/authing/v1/sync-login',
-            proxyConfig: {
-                target: proxyDomain,
-                secure: false,
-                changeOrigin: true,
-                router: function (req) {
-                    var query = get_1(req, 'query', {});
-                    var _proxy_domain_ = query._proxy_domain_;
-                    if (_proxy_domain_) {
-                        return _proxy_domain_;
-                    }
-                    return proxyDomain;
-                },
-            },
-        },
-        {
             path: '/djc-gateway/authing/login',
             proxyConfig: {
-                target: proxyDomain,
+                target: proxyDjcGatewayDomain,
                 secure: false,
                 changeOrigin: true,
                 cookiePathRewrite: '/',
@@ -6917,9 +6908,25 @@ var proxtConfig = function () {
             },
         },
         {
+            path: '/djc-gateway/authing/v1/sync-login',
+            proxyConfig: {
+                target: proxyDjcGatewayDomain,
+                secure: false,
+                changeOrigin: true,
+                router: function (req) {
+                    var query = get_1(req, 'query', {});
+                    var _proxy_domain_ = query._proxy_domain_;
+                    if (_proxy_domain_) {
+                        return _proxy_domain_;
+                    }
+                    return proxyDjcGatewayDomain;
+                },
+            },
+        },
+        {
             path: '/djc-gateway/authing/oauth/authorize',
             proxyConfig: {
-                target: proxyDomain,
+                target: proxyDjcGatewayDomain,
                 secure: false,
                 changeOrigin: true,
                 cookiePathRewrite: '/',
@@ -6932,7 +6939,7 @@ var proxtConfig = function () {
                     if (_proxy_domain_) {
                         return _proxy_domain_;
                     }
-                    return proxyDomain;
+                    return proxyDjcGatewayDomain;
                 },
                 onProxyRes: function (proxyRes, req) {
                     var headerInLocation = proxyRes.headers.location;
@@ -6985,7 +6992,7 @@ var proxtConfig = function () {
         {
             path: '/gateway/v1/user',
             proxyConfig: {
-                target: proxyDomain,
+                target: proxyDjcGatewayDomain,
                 secure: false,
                 changeOrigin: true,
                 onProxyReq: onProxyReq(proxyConfig),
@@ -7049,7 +7056,8 @@ var proxyOptions = function (proxyConfig) {
                             var domainConfig = get_1(mergeEnvDomain, proxyEnv + "." + proxyPlat);
                             // 获取代理平台的平台编码
                             var platformCode = get_1(domainConfig, 'platformCode');
-                            draft.config.envs = __assign(__assign({}, draft.config.envs), (_a = {}, _a[REACT_APP_PROXY_ENV] = proxyEnv, _a[REACT_APP_PROXY_PLAT] = proxyPlat, _a[REACT_APP_PROXY_PARAMS] = buildaPrams(proxyEnv, proxyPlat, mergeEnvDomain, platformCode), _a[REACT_APP_PROXY_LOGIN_DOMAIN] = get_1(domainConfig, 'loginDomain') || domainConfig, _a[REACT_APP_PROXY_LOGIN_DOMAIN_NOT_PROTOCOL] = (get_1(domainConfig, 'loginDomain') || domainConfig).replace(/^(http:|https:)(\/)*/, ''), _a));
+                            draft.config.envs = __assign(__assign({}, draft.config.envs), (_a = {}, _a[REACT_APP_PROXY_ENV] = proxyEnv, _a[REACT_APP_PROXY_PLAT] = proxyPlat, _a[REACT_APP_PROXY_PARAMS] = buildaPrams(proxyEnv, proxyPlat, mergeEnvDomain, platformCode), _a[REACT_APP_PROXY_DJC_GATEWAY_DOMAIN] = get_1(domainConfig, 'djcGatewayDomain', get_1(domainConfig, 'loginDomain')) ||
+                                domainConfig, _a[REACT_APP_PROXY_LOGIN_DOMAIN] = get_1(domainConfig, 'loginDomain') || domainConfig, _a[REACT_APP_PROXY_LOGIN_DOMAIN_NOT_PROTOCOL] = (get_1(domainConfig, 'loginDomain') || domainConfig).replace(/^(http:|https:)(\/)*/, ''), _a));
                         })];
                 case 2: return [2 /*return*/, context];
             }
