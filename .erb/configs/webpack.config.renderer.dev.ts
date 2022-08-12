@@ -39,8 +39,6 @@ if (
   execSync('npm run postinstall');
 }
 
-console.log(webpackPaths.distRendererPath);
-
 const configuration: webpack.Configuration = {
   devtool: 'inline-source-map',
 

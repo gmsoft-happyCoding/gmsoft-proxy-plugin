@@ -108,7 +108,8 @@ const configuration: webpack.Configuration = {
     }),
 
     new MiniCssExtractPlugin({
-      filename: 'style.css',
+      filename: '[name].css',
+      chunkFilename: '[id].css',
     }),
 
     new BundleAnalyzerPlugin({
@@ -136,13 +137,12 @@ const configuration: webpack.Configuration = {
         removeAttributeQuotes: true,
         removeComments: true,
       },
+      publicPath: './dev-login',
       isBrowser: true,
       isDevelopment: process.env.NODE_ENV !== 'production',
       chunks: ['proxy'],
     }),
   ],
 };
-
-console.log(merge(baseConfig, configuration));
 
 export default merge(baseConfig, configuration);

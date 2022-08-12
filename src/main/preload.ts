@@ -1,12 +1,15 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
+import startService from './proxy-service';
 
 export type Channels = 'ipc-example';
 
-const { exec, execFile, spawn } = require('child_process');
+let nodeChildProcess: any = null;
 
-const path = require('path');
-
-// console.log(global.process);
+process.on('exit', () => {
+  if (nodeChildProcess) {
+    nodeChildProcess.close();
+  }
+});
 
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: {
@@ -26,21 +29,10 @@ contextBridge.exposeInMainWorld('electron', {
   },
   nodeVersion: process.version,
   startNode: () => {
-    console.log(path.join(__dirname, './proxy-service.js'));
+    if (nodeChildProcess) {
+      nodeChildProcess.close();
+    }
 
-    exec(
-      `node ${path.join(__dirname, './proxy-service.js')}`,
-      (error, stdout, stderr) => {
-        console.log('已执行');
-
-        if (error) {
-          console.log('错误');
-
-          throw error;
-        }
-
-        console.log(stdout);
-      }
-    );
+    nodeChildProcess = startService();
   },
 });
