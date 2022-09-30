@@ -151,6 +151,7 @@ const configuration: webpack.Configuration = {
 
     new HtmlWebpackPlugin({
       filename: 'proxy.html',
+      publicPath: './dev-login',
       template: path.join(webpackPaths.srcPath, 'loginRender/index.ejs'),
       minify: {
         collapseWhitespace: true,
@@ -179,7 +180,13 @@ const configuration: webpack.Configuration = {
       publicPath: '/',
     },
     historyApiFallback: {
-      verbose: true,
+      rewrites: [
+        {
+          from: /\/dev-login/,
+          to: '/proxy.html',
+        },
+      ],
+      //  verbose: true,
     },
     setupMiddlewares(middlewares) {
       console.log('Starting preload.js builder...');

@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import styled from 'styled-components';
-import { Button } from 'antd';
+import { Button, Form, Select } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { TopRoute } from '../../enums/Route';
@@ -27,6 +27,7 @@ const FlexContent = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: center;
+  padding: 10px 0;
 `;
 
 const Main = () => {
@@ -44,7 +45,30 @@ const Main = () => {
       <FlexHead>
         <Button icon={<PlusOutlined />} type="primary" onClick={add} />
       </FlexHead>
-      <FlexContent>1111</FlexContent>
+      <FlexContent>
+        <Form layout="vertical" style={{ width: '100%' }}>
+          <Form.Item label="环境">
+            <Select placeholder="请选择代理环境">
+              <Select.Option key="dev">dev</Select.Option>
+              <Select.Option key="show">show</Select.Option>
+              <Select.Option key="test">test</Select.Option>
+              <Select.Option key="test1">test1</Select.Option>
+            </Select>
+          </Form.Item>
+          <Form.Item label="机房">
+            <Select placeholder="请选择登录机房">
+              <Select.Option key="zcj">zcj</Select.Option>
+              <Select.Option key="xcj">xcj</Select.Option>
+            </Select>
+          </Form.Item>
+          <Form.Item label="登录域名">
+            <Select placeholder="请输入需要登录的域名">
+              <Select.Option key="zcj">zcj</Select.Option>
+              <Select.Option key="xcj">xcj</Select.Option>
+            </Select>
+          </Form.Item>
+        </Form>
+      </FlexContent>
     </Container>
   );
 };

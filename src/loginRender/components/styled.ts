@@ -26,9 +26,16 @@ export const LoginHead = styled.div`
   color: rgba(0, 0, 0, 0.8);
 `;
 
+const bgPath = (path: string) => {
+  if (process.env.NODE_ENV === 'development') {
+    return `/dev-login${path}`;
+  }
+  return path;
+};
+
 export const ContentMain = styled.div`
   height: calc(100% - 140px);
-  background-image: url(${LoginPhoto});
+  background-image: url(${bgPath(LoginPhoto)});
   background-repeat: no-repeat;
   background-size: cover;
 `;

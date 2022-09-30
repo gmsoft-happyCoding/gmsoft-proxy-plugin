@@ -23,7 +23,16 @@ export interface FormValue {
 
 const LoginFrame = () => {
   const {
-    buildLoginParams = {},
+    buildLoginParams = {
+      client_id: 'plat@ZCJ',
+      scope: 'www.gpwbeta.com',
+      redirect_uri: `https://www.gpwbeta.com/gateway/v1/login`,
+      state: JSON.stringify({
+        client_id: 'plat@ZCJ',
+        scope: 'www.gpwbeta.com',
+        redirect_uri: `https://www.gpwbeta.com/gateway/v1/login`,
+      }),
+    },
     loginSuccessRedirectUri = '',
     setMode,
     setIdentities,
