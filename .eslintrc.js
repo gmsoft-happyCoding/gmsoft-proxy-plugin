@@ -8,6 +8,10 @@ module.exports = {
     'react/react-in-jsx-scope': 'off',
     'import/prefer-default-export': 'off',
     '@typescript-eslint/naming-convention': 'off',
+    'react/function-component-definition': 'off',
+    'react/jsx-filename-extension': 'off',
+    'no-unused-vars': 'off',
+    'import/extensions': 'off',
   },
   parserOptions: {
     ecmaVersion: 2020,

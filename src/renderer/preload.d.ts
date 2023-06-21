@@ -12,7 +12,7 @@ declare global {
         once(channel: string, func: (...args: unknown[]) => void): void;
       };
       nodeVersion: string;
-      startNode: () => void;
+      startNode: (target_domain: string, proxy_port: number) => void;
     };
   }
 }

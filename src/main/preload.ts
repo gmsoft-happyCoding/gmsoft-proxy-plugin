@@ -1,7 +1,8 @@
 /* eslint-disable */
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 // import startService from './proxy-service';
-import startProxy from './http-proxy';
+import { spawn } from 'child_process';
+// import startProxy from './http-proxy';
 
 export type Channels = 'ipc-example';
 
@@ -30,15 +31,18 @@ contextBridge.exposeInMainWorld('electron', {
     },
   },
   nodeVersion: process.version,
-  startNode: () => {
+  startNode: (target_domain: string, proxy_port: number) => {
     console.log('执行代理');
 
-    // if (nodeChildProcess) {
-    //   nodeChildProcess.close();
-    // }
+    if (nodeChildProcess) {
+      nodeChildProcess.kill();
+    }
 
-    console.log(startProxy);
-
-    startProxy();
+    nodeChildProcess = spawn('ts-node', ['./http-proxy.ts'], {
+      env: {
+        NODE_PROXY_TARGET: target_domain,
+        NODE_PROXY_PORT: `${proxy_port}`,
+      },
+    });
   },
 });

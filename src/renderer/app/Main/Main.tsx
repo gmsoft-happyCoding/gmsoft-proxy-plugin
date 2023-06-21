@@ -2,8 +2,8 @@ import { useCallback } from 'react';
 import styled from 'styled-components';
 import { Button, Form, Select } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
-import { TopRoute } from '../../enums/Route';
+// import { useNavigate } from 'react-router-dom';
+// import { TopRoute } from '../../enums/Route';
 
 const Container = styled.div`
   width: 100vw;
@@ -31,13 +31,13 @@ const FlexContent = styled.div`
 `;
 
 const Main = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   // 新增 按钮
   const add = useCallback(() => {
     // navigate(TopRoute.PROJECT_ADD);
 
-    window.electron.startNode();
+    window.electron.startNode('https://www.baidu.com', 3000);
   }, []);
 
   return (
