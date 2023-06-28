@@ -14,6 +14,7 @@
     "start": "concurrently \"npm run start:render \" \"electronmon -r ts-node/register/transpile-only .\""
   },
   "dependencies": {
+    "@ant-design/icons": "^5.1.4",
     "antd": "^5.6.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -33,6 +34,7 @@
     "eslint": "^8.38.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.3.4",
+    "lodash": "^4.17.21",
     "typescript": "^5.0.2",
     "vite": "^4.3.9"
   }
