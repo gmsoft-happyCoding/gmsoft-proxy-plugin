@@ -1,0 +1,16 @@
+[
+    {
+        "target": "https: //www.baidu.com",
+        "port": 3000,
+        "changeOrigin": true,
+        "secure": false,
+        "proxy": [
+            {
+                "path": "/ws"
+            },
+            {
+                "path": "/ws"
+            }
+        ]
+    }
+]

@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import styled from "styled-components";
 import { Button, Card, List } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, PoweroffOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import LayoutDrawer from "./Drawer";
 import { TopRoute } from "../../enums/Route";
@@ -59,7 +59,22 @@ const Main = () => {
           dataSource={data}
           renderItem={(item) => (
             <List.Item>
-              <Card title={item.label}>{item.proxyDomain}</Card>
+              <Card
+                title={item.label}
+                extra={
+                  <Button
+                    type="primary"
+                    icon={<PoweroffOutlined />}
+                    onClick={() => {
+                      console.log(window.electron);
+                      
+                      window.electron.startProxyService();
+                    }}
+                  />
+                }
+              >
+                {item.proxyDomain}
+              </Card>
             </List.Item>
           )}
         />

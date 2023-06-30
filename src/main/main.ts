@@ -1,5 +1,7 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, ipcMain } from "electron";
 import { join } from "path";
+import Server from "http-proxy";
+import startProxy from "./proxy";
 
 const isPackaged = app.isPackaged;
 
@@ -14,13 +16,9 @@ const createWindow = () => {
     },
   });
 
-  console.log(join(__dirname, "../preload/preload.js"));
-
-  console.log(isPackaged);
-
   isPackaged
     ? win.loadFile("dist/index.html")
-    : win.loadURL("http://127.0.0.1:5173");
+    : win.loadURL("http://localhost:3000");
 };
 
 app.whenReady().then(() => {
@@ -29,4 +27,13 @@ app.whenReady().then(() => {
 
 app.on("window-all-closed", function () {
   if (process.platform !== "darwin") app.quit();
+});
+
+let service: Server | null = null;
+
+ipcMain.handle("startProxyService", () => {
+  if (service) {
+    service.close();
+  }
+  service = startProxy();
 });
