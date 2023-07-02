@@ -4,6 +4,10 @@ interface Window {
     chrome: () => string;
     electron: () => string;
     startProxyService: () => void;
+    onUpdateConfig: (callback: any) => void;
+    servers: any[];
+    changeServerStatus: (status: boolean) => void;
+    renderReady: () => void;
   };
 }
 

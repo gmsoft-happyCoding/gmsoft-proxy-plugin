@@ -11,5 +11,5 @@
     "baseUrl": "./src/main",
     "outDir": "release/app/dist"
   },
-  "include": ["./src/main/*", "./src/preload/*"]
+  "include": ["./src/main/**/*", "./src/preload/**/*"]
 }

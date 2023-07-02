@@ -1,11 +1,11 @@
-import React from 'react';
-import { Routes } from 'react-router-dom';
-import { useRoute, useGetRoutePath } from '../../hooks';
-import Loading from '../../components/Loading';
-import route from './route';
+import React from "react";
+import { Routes } from "react-router-dom";
+import { useRoute, useGetRoutePath } from "../../hooks";
+import Loading from "../../components/Loading";
+import route from "./route";
 
 const MainEntry = () => {
-  const path = useGetRoutePath('/');
+  const path = useGetRoutePath("/");
 
   const routeRender = useRoute(path, route);
 

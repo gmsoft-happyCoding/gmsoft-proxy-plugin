@@ -1,28 +1,40 @@
-import httpProxy from "http-proxy";
+import express from "express";
+import { Server } from "http";
+import { createProxyMiddleware } from "http-proxy-middleware";
 
-const startProxy = () => {
-  console.log("111111");
+interface Args {
+  proxyServerPort: number;
+  webServerPort: number;
+  proxyConfig: any[];
+}
 
-  const service = httpProxy
-    .createProxyServer({
-      // forward: "/ws",
+const startProxy: (args: Args) => Server = () => {
+  const app = express();
+
+  app.use(
+    ["/1", "/2", "/3", "/4"],
+    createProxyMiddleware({
       target: "https://www.baidu.com",
       changeOrigin: true,
       secure: false,
+      ignorePath: true,
     })
-    .listen(3000);
+  );
 
-  service.on("open", () => {
-    console.log("代理服务器开启");
+  app.use(
+    "*",
+    createProxyMiddleware({
+      target: "http://localhost:3000",
+      changeOrigin: true,
+      secure: false,
+    })
+  );
+
+  const httpService = app.listen(8000, () => {
+    console.log(`服务器启动，开始监听 localhost:3000`);
   });
 
-  service.on("close", () => {
-    console.log("代理服务器关闭");
-  });
-
-  //  console.log(service);
-
-  return service;
+  return httpService;
 };
 
 export default startProxy;

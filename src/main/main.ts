@@ -1,14 +1,19 @@
 import { app, BrowserWindow, ipcMain } from "electron";
 import { join } from "path";
-import Server from "http-proxy";
+import { Server } from "http";
 import startProxy from "./proxy";
+import { readJsonFile } from "./utils";
 
 const isPackaged = app.isPackaged;
 
+let win = null;
+
 const createWindow = () => {
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 800,
     height: 600,
+    title: "Electron代理",
+    paintWhenInitiallyHidden: false,
     webPreferences: {
       preload: isPackaged
         ? join(__dirname, "../preload.js")
@@ -18,7 +23,7 @@ const createWindow = () => {
 
   isPackaged
     ? win.loadFile("dist/index.html")
-    : win.loadURL("http://localhost:3000");
+    : win.loadURL("http://localhost:8000");
 };
 
 app.whenReady().then(() => {
@@ -36,4 +41,12 @@ ipcMain.handle("startProxyService", () => {
     service.close();
   }
   service = startProxy();
+});
+
+ipcMain.handle("renderReady", () => {
+  const json = readJsonFile();
+
+  console.log("发送消息");
+
+  win.webContents.send("update-config", json);
 });

@@ -1,0 +1,13 @@
+{
+    "changeOrigin": true,
+    "secure": false,
+    "target": "{proxy_domain}",
+    "proxy": [
+        {
+            "path": "/djc-gateway"
+        },
+        {
+            "path": "/djc-gateway"
+        }
+    ]
+}
