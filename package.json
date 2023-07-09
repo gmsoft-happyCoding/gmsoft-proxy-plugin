@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "commonjs",
   "main": "./src/main/main.ts",
+  "build": {},
   "scripts": {
     "dev": "vite serve ./src/render",
     "build": "tsc && vite build",
@@ -12,7 +13,8 @@
     "start:dev": "vite ./src/render --port 8000",
     "start:render": "vite ./src/render --host localhost --port 8000",
     "start:electron": "electronmon -r ts-node/register/transpile-only .",
-    "start": "concurrently \"npm run start:render \" \"tsc ./src/preload/preload.ts && electronmon -r ts-node/register/transpile-only .\""
+    "start": "concurrently \"npm run start:render \" \"tsc ./src/preload/preload.ts && electronmon -r ts-node/register/transpile-only .\"",
+    "build:e": "electron-builder --dir"
   },
   "dependencies": {
     "@ant-design/icons": "^5.1.4",
@@ -34,6 +36,7 @@
     "@vitejs/plugin-react": "^4.0.0",
     "concurrently": "^8.2.0",
     "electron": "^25.2.0",
+    "electron-builder": "^24.4.0",
     "electronmon": "^2.0.2",
     "eslint": "^8.38.0",
     "eslint-plugin-react-hooks": "^4.6.0",
