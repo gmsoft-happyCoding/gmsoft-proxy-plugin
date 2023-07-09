@@ -8,7 +8,7 @@ interface Args {
   proxyConfig: any[];
 }
 
-const startProxy: (args: Args) => Server = () => {
+const startProxy: (args?: Args) => Server = () => {
   const app = express();
 
   app.use(

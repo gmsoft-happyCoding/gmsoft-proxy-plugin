@@ -45,12 +45,12 @@ const Main = () => {
 
   const { drawerVisible, drawerOpen, drawerClose } = useHandle();
 
-  const servers = useMemo(() => window.electron.servers, []);
+  const servers = useMemo(() => window?.electron?.servers, []);
 
   const [serverList, setServerList] = useState<any[]>(servers || []);
 
   useEffect(() => {
-    window.electron.onUpdateConfig((event, config) => {
+    window?.electron?.onUpdateConfig((event, config) => {
       console.log("传递json");
       setServerList(config);
       console.log(config);

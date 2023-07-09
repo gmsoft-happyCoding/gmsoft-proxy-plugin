@@ -1,17 +1,34 @@
 {
-  "name": "vite-project",
+  "name": "electron-project",
   "private": true,
   "version": "0.0.0",
   "type": "commonjs",
   "main": "./src/main/main.ts",
-  "build": {},
+  "build": {
+    "productName": "大家开发代理",
+    "directories": {
+      "output": "build"
+    },
+    "files": [
+      "dist/**/*"
+    ],
+    "win": {
+      "target": "portable",
+      "arch": [
+        "x64"
+      ]
+    }
+  },
   "scripts": {
-    "dev": "vite serve ./src/render",
+    "dev": "vite",
+    "dev:render": "vite",
     "build": "tsc && vite build",
+    "build:main": "tsc",
+    "build:render": "vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "start:dev": "vite ./src/render --port 8000",
-    "start:render": "vite ./src/render --host localhost --port 8000",
+    "start:dev": "vite --port 8000",
+    "start:render": "vite --host localhost --port 8000",
     "start:electron": "electronmon -r ts-node/register/transpile-only .",
     "start": "concurrently \"npm run start:render \" \"tsc ./src/preload/preload.ts && electronmon -r ts-node/register/transpile-only .\"",
     "build:e": "electron-builder --dir"
@@ -28,6 +45,8 @@
     "ts-node": "^10.9.1"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.2",
+    "@rollup/plugin-node-resolve": "^15.1.0",
     "@types/express": "^4.17.17",
     "@types/react": "^18.0.37",
     "@types/react-dom": "^18.0.11",
