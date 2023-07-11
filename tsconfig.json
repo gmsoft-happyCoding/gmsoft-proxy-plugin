@@ -6,10 +6,12 @@
     "esModuleInterop": true,
     "composite": true,
     "module": "commonjs",
+    "skipLibCheck": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "baseUrl": "./src/main",
-    "outDir": "/dist/electron"
+    "outDir": "./dist/electron",
+    "types": ["node", "electron", "express"]
   },
   "include": ["./src/main/**/*", "./src/preload/**/*"]
 }

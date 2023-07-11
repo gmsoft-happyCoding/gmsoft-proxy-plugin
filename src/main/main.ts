@@ -22,7 +22,7 @@ const createWindow = () => {
   });
 
   isPackaged
-    ? win.loadFile("dist/index.html")
+    ? win.loadFile("dist/render/index.html")
     : win.loadURL("http://localhost:8000");
 };
 

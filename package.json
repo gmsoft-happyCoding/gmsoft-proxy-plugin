@@ -1,5 +1,6 @@
 {
-  "name": "electron-project",
+  "name": "大家开发代理",
+  "description": "大家开发代理",
   "private": true,
   "version": "0.0.0",
   "type": "commonjs",
@@ -10,19 +11,18 @@
       "output": "build"
     },
     "files": [
-      "dist/**/*"
+      "dist/*"
     ],
+    "asar": false,
+    "extends": null,
     "win": {
-      "target": "portable",
-      "arch": [
-        "x64"
-      ]
+      "target": "portable"
     }
   },
   "scripts": {
     "dev": "vite",
     "dev:render": "vite",
-    "build": "tsc && vite build",
+    "build": "npm build:main && npm build:render",
     "build:main": "tsc",
     "build:render": "vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
@@ -31,7 +31,7 @@
     "start:render": "vite --host localhost --port 8000",
     "start:electron": "electronmon -r ts-node/register/transpile-only .",
     "start": "concurrently \"npm run start:render \" \"tsc ./src/preload/preload.ts && electronmon -r ts-node/register/transpile-only .\"",
-    "build:e": "electron-builder --dir"
+    "package": "electron-builder build"
   },
   "dependencies": {
     "@ant-design/icons": "^5.1.4",
