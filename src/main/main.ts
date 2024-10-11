@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, session } from "electron";
 import { join } from "path";
 import { Server } from "http";
 import startProxy from "./proxy";
@@ -15,6 +15,7 @@ const createWindow = () => {
     title: "Electron代理",
     paintWhenInitiallyHidden: false,
     webPreferences: {
+      allowRunningInsecureContent: true,
       preload: isPackaged
         ? join(__dirname, "../preload.js")
         : join(__dirname, "../preload/preload.js"),
@@ -24,9 +25,22 @@ const createWindow = () => {
   isPackaged
     ? win.loadFile("dist/render/index.html")
     : win.loadURL("http://localhost:8000");
+
+  win.webContents.openDevTools();
 };
 
+app.commandLine.appendSwitch('--ignore-certificate-errors', 'true')
+
 app.whenReady().then(() => {
+  // session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+  //   callback({
+  //     responseHeaders: {
+  //       ...details.responseHeaders,
+  //       "Content-Security-Policy": "*", // ["default-src 'none'"],
+  //     },
+  //   });
+  // });
+
   createWindow();
 });
 
